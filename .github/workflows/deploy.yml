@@ -19,6 +19,11 @@ jobs:
           toolchain: nightly-2024-02-03
           targets: wasm32-wasi
 
+      - uses: jetli/trunk-action@v0.5.0
+        with:
+        # Optional version of trunk to install(eg. 'v0.19.1', 'latest')
+          version: 'latest'
+
       - name: Install Spin
         uses: fermyon/actions/spin/setup@v1
 
