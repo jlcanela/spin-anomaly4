@@ -1,0 +1,28 @@
+spin_manifest_version = 2
+
+[application]
+name = "static"
+version = "0.1.0"
+authors = ["jlcanela <jlcanelam@gmail.com>"]
+description = ""
+
+[[trigger.http]]
+route = "/api"
+component = "backend"
+
+[[trigger.http]]
+route = "/..."
+component = "static"
+
+[component.static]
+source = { url = "https://github.com/fermyon/spin-fileserver/releases/download/v0.2.1/spin_static_fs.wasm", digest = "sha256:5f05b15f0f7cd353d390bc5ebffec7fe25c6a6d7a05b9366c86dcb1a346e9f0f" }
+files = [{ source = "../frontend/dist", destination = "/" }]
+environment = { FALLBACK_PATH = "index.html" }
+
+[component.backend]
+source = "../backend/target/wasm32-wasi/release/my_rust_app.wasm"
+allowed_outbound_hosts = []
+
+[component.backend.build]
+command = "cd ../backend && cargo build --target wasm32-wasi --release"
+watch = ["src/**/*.rs", "Cargo.toml"]

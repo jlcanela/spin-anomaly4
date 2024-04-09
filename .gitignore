@@ -1,0 +1,5 @@
+.env
+.spin
+.vscode
+frontend/dist
+target/
