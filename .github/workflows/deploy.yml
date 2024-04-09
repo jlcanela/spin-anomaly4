@@ -10,6 +10,7 @@ jobs:
   spin:
     runs-on: ubuntu-latest
     name: Build and deploy
+    environment: Anomaly4
     steps:
       - uses: actions/checkout@v3
 
