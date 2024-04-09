@@ -17,7 +17,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: nightly-2024-02-03
-          targets: wasm32-wasi
+          targets: wasm32-wasi,wasm32-unknown-unknown
 
       - uses: jetli/trunk-action@v0.5.0
         with:
