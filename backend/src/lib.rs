@@ -30,6 +30,13 @@ fn config() -> Result<String, String> {
 #[http_component]
 fn handle_my_rust_app(_req: Request) -> anyhow::Result<impl IntoResponse> {
 
+    let _subscriber = tracing_subscriber::fmt()
+    .compact()
+    .with_file(true)
+    .with_line_number(true)
+    .without_time()
+    .init();
+
     fn res(body: String, status: u16) -> anyhow::Result<impl IntoResponse> {
       Ok(Response::builder()
         .status(status)
@@ -39,8 +46,14 @@ fn handle_my_rust_app(_req: Request) -> anyhow::Result<impl IntoResponse> {
     }
 
     match config() {
-        Ok(c) => res(c, 200),
-        Err(e) => res(e, 500),
+        Ok(c) => {
+            tracing::info!("successfully fetched config");
+            res(c, 200)
+        },
+        Err(e) => {
+            tracing::error!("failed to fetch config: {}", e);
+            res(e, 500)
+        }
     }
 
 }

@@ -125,6 +125,8 @@ dependencies = [
  "serde",
  "serde_json",
  "spin-sdk",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
