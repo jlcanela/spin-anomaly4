@@ -76,3 +76,39 @@ body {
 #home span {
     font-size: var(--button-font-size);
 }
+
+.flag {
+    width: 40px;
+    height: 30px;
+}
+
+#game {
+    padding: 2em;
+    width: 100%;
+}
+
+#status {
+    width: 100%;
+    padding: 1em;
+}
+
+#status .status-border {
+    width: 100%;
+    border-style: solid;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 4em; 
+    padding-right: 4em;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    
+}
+
+#game-content {
+    width: 100%;
+}
+
+#buttons {
+    padding: 1em;;    
+}

@@ -9,7 +9,11 @@ up:
 
 watch:
     spin watch
-    
+
+clean:
+    cargo clean
+    trunk clean --config frontend/Trunk.toml
+
 # test everything
 test-all:
     cargo test
