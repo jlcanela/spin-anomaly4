@@ -10,7 +10,7 @@ pub fn Game() -> impl IntoView {
         <Stack spacing=Size::Em(0.0)> 
             <Stack id="status" spacing=Size::Em(0.0) orientation=StackOrientation::Horizontal>
                 <div class="status-border">
-                    <div>Governor: ABC
+                    <div>Governeur: ABC
                     </div>
                     <div>|</div>
                     <div>18 Points
@@ -22,7 +22,7 @@ pub fn Game() -> impl IntoView {
             </Stack>    
             <div id="game-content">
                 <Tabs mount=Mount::Once>
-                    <Tab name="control-center" label="Control Center".into_view()><GameContent/></Tab>
+                    <Tab name="control-center" label="Centre de Contrôle".into_view()><GameContent/></Tab>
                     //<Tab name="star-map" label="Star Map".into_view()>"Star Map"</Tab>
                     //<Tab name="diplomacy" label="Diplomacy".into_view()>"Diplomacy"</Tab>
                 </Tabs>

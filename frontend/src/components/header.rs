@@ -15,7 +15,7 @@ pub fn Header() -> impl IntoView {
             <Stack orientation=StackOrientation::Horizontal spacing=Size::Em(0.6)>
                 
                 <Skeleton animated=false>
-                    <Link  href="/">
+                    <Link href="/">
                         <H1>Anomaly4</H1>
                     </Link>
                 </Skeleton>
@@ -24,7 +24,9 @@ pub fn Header() -> impl IntoView {
 
                 } >
                     <Skeleton animated=false>
+                        <Link href="/game">
                         <H1 style="display: inline;">Le Jeu</H1>
+                        </Link>
                     </Skeleton>
                 </Authenticated>
             

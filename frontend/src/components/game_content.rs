@@ -28,18 +28,84 @@ pub fn OwnedStars() -> impl IntoView {
         Star { id: 1, name: "Kevin".to_string(), owner: "Green".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 },
         Star { id: 2, name: "Stuart".to_string(), owner: "Blue".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 }));
 
+    let (nb_shuttles_move, set_nb_shuttles_move) = create_signal(0.0);
+
+    let (nb_shuttles_attack, set_nb_shuttles_attack) = create_signal(0.0);
+
     let buttons = move || {
         if current_star_id.get().is_some() {
             view! {
                 <div id="buttons">
                     <H2>"Choisissez votre ordre pour '#"{current_star_id}"'"</H2>
-                    <Stack orientation=StackOrientation::Horizontal spacing=Size::Em(0.0)>
-                        <Button on_click=move |_| {}>"Produire"</Button>
-                        <Button on_click=move |_| {}>"Piller"</Button>
-                        <Button on_click=move |_| {}>"Développer"</Button>
-                        <Button on_click=move |_| {}>"Déplacer"</Button>
-                        <Button on_click=move |_| {}>"Attaquer"</Button>
-                    </Stack>
+                    <Tabs>
+                        <Tab name="produce" label=view! { <div>"Produire"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                            "Produire des navettes sur Nogami"<br/>"Coût: 8 Points"
+                                </div>
+                                <Button on_click=move |_| {
+                                    tracing::info!("Produce order sent");
+                                }>"Produire"</Button>
+                            </Stack>
+                        </Tab>
+                        <Tab name="loot" label=view! { <div>"Piller"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                                "Piller Nogami pour obtenir des navettes"<br/>
+                                "Coût: 1 Point"<br/>
+                                //"Dev_Max ({3}) updated to: {2}"<br/>
+                                //"Dev ({3}) updated to: {2}"
+                                </div>
+                                <Button on_click=move |_| {
+                                    tracing::info!("Loot order sent");
+                                }>"Piller"</Button>
+                            </Stack>
+                        </Tab>
+                        <Tab name="develop" label=view! { <div>"Développer"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                                    "Developper économiquement Nogami"<br/>
+                                    "Coût: 8 Points & 3 Navettes"<br/>
+                                    //"Dev ({2}) updated to: {3}."
+                                </div>
+                                <Button on_click=move |_| {
+                                    tracing::info!("Develop order sent");
+                                }>"Développer"</Button>
+                            </Stack>
+                        </Tab>
+                        <Tab name="move" label=view! { <div>"Déplacer"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                                    "Déplacer "{nb_shuttles_move}" navettes de Nogami vers Rokoto"<br/>
+                                    "Coût: {13} Points"
+                                    <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                        "Navettes:"
+                                        <NumberInput min=0.0 max=10.0 step=1.0 get=nb_shuttles_move set=set_nb_shuttles_move placeholder="Sélectionnez le nombre de navettes à déplacer"/>
+                                    </Stack>
+                                </div>
+                                <Button on_click=move |_| {
+                                    tracing::info!("Move order sent");
+                                }>"Déplacer"</Button>
+                            </Stack>
+                        </Tab>
+                        <Tab name="attack" label=view! { <div>"Attaquer"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                                    "Attaquer Rokoto à partir de Nogami en utilisant "{nb_shuttles_attack}" navettes"<br/>
+                                    "Coût: {13} Points"
+                                    <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                        "Navettes:"
+                                        <NumberInput min=0.0 max=10.0 step=1.0 get=nb_shuttles_attack set=set_nb_shuttles_attack placeholder="Sélectionnez le nombre de navettes pour attaquer"/>
+                                    </Stack>
+                                </div>
+                                <Button on_click=move |_| {
+                                    tracing::info!("Attack order sent");
+                                }>"Attaquer"</Button>
+                            </Stack>
+                        </Tab>
+
+                    </Tabs>
+
                     <Stack orientation=StackOrientation::Horizontal spacing=Size::Em(1.0)>
                         "Ne pas demander de confirmation pour l'ordre:"
                         <Checkbox checked=confirm_order set_checked=set_confirm_order />
@@ -136,7 +202,7 @@ pub fn Radar() -> impl IntoView {
 #[component]
 pub fn GameContent() -> impl IntoView {
     view! {
-        <Stack spacing=Size::Em(2.0)>
+        <Stack spacing=Size::Em(0.0)>
             <H2>"Vos étoiles"</H2>
             <p>"Sélectionner une étoile pour effectuer une action"</p>
             <Skeleton>

@@ -112,3 +112,44 @@ body {
 #buttons {
     padding: 1em;;    
 }
+
+#buttons leptonic-tab-selectors {
+        padding: 0;
+}
+
+
+#buttons leptonic-tab-selector {
+    padding: 0.5em 0.75em;
+    margin: 0;
+
+      border-width: var(--button-border-size);
+      font-size: 1em;
+      font-weight: 400;
+      line-height: 1.25;
+
+      &::before {
+        content: "";
+        height: calc(100% + var(--button-border-size) * 2);
+        width: calc(100% + var(--button-border-size) * 2);
+        position: absolute;
+        top: calc(var(--button-border-size) * -1);
+        left: calc(var(--button-border-size) * -1);
+    
+        border-radius: var(--button-border-radius);
+        transition: all 0.1s ease-in-out;
+        opacity: var(--button-box-shadow-opacity);
+    
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .name {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 0.5em 0.75em;
+        line-height: 1em;
+      }
+    
+}
