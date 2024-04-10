@@ -205,13 +205,9 @@ pub fn GameContent() -> impl IntoView {
         <Stack spacing=Size::Em(0.0)>
             <H2>"Vos étoiles"</H2>
             <p>"Sélectionner une étoile pour effectuer une action"</p>
-            <Skeleton>
-                <OwnedStars/>
-            </Skeleton>
+            <OwnedStars/>
             <H2>"Radar"</H2>
-            <Skeleton>
-                <Radar/>
-            </Skeleton>
+            <Radar/>
         </Stack>
     }
 }
