@@ -1,0 +1,35 @@
+@import "./leptonic/leptonic-themes";
+
+[data-theme="light"] {
+    --brand-color: #3061aa;
+}
+
+[data-theme="dark"] {
+    --brand-color: #3061aa;
+}
+
+#flag-icons-fr, #flag-icons-gb {
+    max-width: 2vw;
+    max-height: 1.5vh;
+}
+
+:root {
+    --background-color: #f0f0f0;
+}
+
+#header {
+    color: black; //var(--brand-color);
+    --skeleton-background-color: var(--background-color);
+    --link-color: black;
+    background-color: var(--background-color);
+
+}
+
+#header h2 a:hover{
+    color: #303030;
+}
+
+#home-page {
+    --typography-p-line-height: 1.2;
+    --typography-p-margin: 0 0 0 0;
+}

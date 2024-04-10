@@ -1,42 +1,59 @@
+use leptonic::prelude::*;
 use leptos::*;
-use leptos_oidc::*;
 use leptos_meta::*;
 use leptos_router::*;
 
 use url::Url;
+//use leptos_i18n::provide_i18n_context;
 
-mod auth0;
+mod components;
+mod pages;
 
-use crate::auth0::MakeAuth0;
+use crate::components::auth0::MakeAuth0;
+use crate::components::error_template::{AppError, ErrorTemplate};
+use crate::components::header::Header;
+use crate::pages::game::Game;
+use crate::pages::home::Home;
 
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();
+  //  provide_i18n_context();
 
     view! {
         <Stylesheet id="leptos" href="/pkg/main.css"/>
 
-        <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-
-        <Router>
+        <Stylesheet id="leptos" href="/pkg/leptonic-template-ssr.css"/>
+        <Stylesheet href="https://fonts.googleapis.com/css?family=Roboto&display=swap"/>
+        //<Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
+        <Root default_theme=LeptonicTheme::default()>
+        <Router fallback=|| {
+            let mut outside_errors = Errors::default();
+            outside_errors.insert_with_default_key(AppError::NotFound);
+            view! {
+                <ErrorTemplate outside_errors/>
+            }
+        }>
             <AppWithRouter/>
         </Router>
+        </Root>
     }
 }
 
 fn main() {
+    use tracing_subscriber_wasm::MakeConsoleWriter;
+
+    let _subscriber = tracing_subscriber::fmt()
+    .compact()
+    .with_file(true)
+    .with_line_number(true)
+    .without_time()
+    .with_writer(MakeConsoleWriter::default().map_trace_level_to(tracing::Level::DEBUG))
+    .init();
+
     mount_to_body(|| view! { <App />})
 }
 
-#[component]
-pub fn Home() -> impl IntoView {
-    view! {
-        <Title text="Home"/>
-        <h1>Home</h1>
-
-        // Your Pome Page without authentication
-    }
-}
 
 /// This will be rendered, if the authentication library is still loading
 #[component]
@@ -105,16 +122,40 @@ pub fn AppWithRouter() -> impl IntoView {
         // This is an example for a navbar where you have a login and logout
         // button, based on the state.
         <MakeAuth0 base_url = base_url config_url = config_url loading = || view! { <div>Loading Config</div>}>
-            <div>
-                <Authenticated unauthenticated=move || {
-                    view! {
-                        <LoginLink class="text-login">Sign in</LoginLink>
-                    }
-                }>
-                    <LogoutLink class="text-logout">Sign Out</LogoutLink>
-                </Authenticated>
-            </div>
-            
+            <Header/>
+            // <div>
+            //     <Authenticated unauthenticated=move || {
+            //         view! {
+            //             <LoginLink class="text-login">Sign in</LoginLink>
+            //         }
+            //     }>
+            //         <LogoutLink class="text-logout">Sign Out</LogoutLink>
+            //     </Authenticated>
+            // </div>
+            // <Grid spacing=Size::Em(0.6)>
+            //     <Row>
+            //         <Col md=3 sm=4 xs=6>
+            //             <Skeleton animated=false>"Item 1"</Skeleton>
+            //         </Col>
+            //         <Col md=3 sm=4 xs=6>
+            //             <Skeleton animated=false>"Item 2"</Skeleton>
+            //         </Col>
+            //         <Col md=3 sm=4 xs=6>
+            //             <Skeleton animated=false>"Item 3"</Skeleton>
+            //         </Col>
+            //         <Col md=3 sm=12 xs=6>
+            //             <Skeleton animated=false>"Item 4"</Skeleton>
+            //         </Col>
+            //     </Row>
+            //     <Row>
+            //         <Col md=8 sm=6 xs=12>
+            //             <Skeleton animated=false>"Item 5"</Skeleton>
+            //         </Col>
+            //         <Col md=4 sm=6 xs=12>
+            //             <Skeleton animated=false>"Item 6"</Skeleton>
+            //         </Col>
+            //     </Row>
+            // </Grid>
             <Routes>
                 <Route path="/" view=move || view! { <Home/> }/>
                 
@@ -123,17 +164,8 @@ pub fn AppWithRouter() -> impl IntoView {
                 // unauthenticated and it will render the children, if it's
                 // authenticated
                 <Route
-                path="/profile"
-                view=move || {
-                    view! {
-                        <Authenticated
-                        loading=move || view! { <Loading/> }
-                        unauthenticated=move || view! { <Unauthenticated/> }
-                        >
-                        <Profile/>
-                    </Authenticated>
-                }
-                }
+                path="/game"
+                view=|| view! { <Game/> }
                 />
             </Routes>
         </MakeAuth0>

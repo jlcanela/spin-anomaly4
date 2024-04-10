@@ -29,8 +29,8 @@ pub struct WebConfig {
 
 fn make_auth_params(client_id: String, auth0_domain: String, base_url: String) -> AuthParameters {
 
-    let redirect_uri = format!("{}/profile", base_url);
-    let post_logout_redirect_uri = format!("{}/bye?destroy_session=true", base_url);
+    let redirect_uri = format!("{}/game", base_url);
+    let post_logout_redirect_uri = format!("{}/", base_url);
 
     AuthParameters {
         auth_endpoint: format!("https://{}/authorize", auth0_domain),
