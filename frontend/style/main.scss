@@ -15,6 +15,7 @@
 
 :root {
     --background-color: #f0f0f0;
+    --typography-p-font-size: 1em;
 }
 
 #header {
@@ -32,4 +33,46 @@
 #home-page {
     --typography-p-line-height: 1.2;
     --typography-p-margin: 0 0 0 0;
+}
+
+@media (min-width: 640px) {
+    body {
+        --border-size-x: 0px;
+        --button-font-size: 1em;
+    }
+}
+
+@media (min-width: 768px) {
+    body {
+        --border-size-x: calc(-312px + 40vw);
+        --button-font-size: 1em;
+    }
+}
+
+body {
+    font-size: calc(15px + 0.390625vw);
+    --border-size-y: calc(-10px + 2vw);
+}
+
+.home-text {
+    margin: 2em;
+    padding: 2em;
+    background-color: var(--skeleton-background-color);
+}
+
+.home-text leptonic-checkbox {
+    justify-content: flex-start;
+    padding: 0.5em 1em 1em 1em;
+}
+
+.home-text leptonic-link, #header leptonic-link {
+    font-size: var(--button-font-size);
+}
+
+#home {
+    margin: 1.5em var(--border-size-x) var(--border-size-y) var(--border-size-x);
+}
+
+#home span {
+    font-size: var(--button-font-size);
 }

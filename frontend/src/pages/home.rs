@@ -9,22 +9,19 @@ pub fn Register() -> impl IntoView {
     let (accept_register, set_accept_register) = create_signal(false);
     let disable_register = move || !accept_register.get();
     view! {       
-        <Stack spacing=Size::Em(1.0)>
-        <div style="margin: 0 8em 0 8em">
+        <div class="home-text">
             <p>"Ce site est un projet personnel privé. Seules les personnes habilitées ont le droit de s'enregistrer et de jouer."</p>
             <p>"Si vous vous enregistrez, vous pouvez le faire soit en utilisant un compte google, soit en fournissant un email et un mot de passe."</p>
-            <p>"Votre email sera utilisé par le fournisseur d'authentification"<a href="https://auth0.com/">Auth0</a>" pour vous envoyer un email de confirmation. Auth0 fourni également un service de réinitialisation de mot de passe et de suppression de compte."</p>
+            <p>"Votre email sera utilisé par le fournisseur d'authentification "<a href="https://auth0.com/">Auth0</a>" pour vous envoyer un email de confirmation. Auth0 fourni également un service de réinitialisation de mot de passe et de suppression de compte."</p>
             <p>"Le site en lui même n'utilise votre email que pour l'associer à votre compte de jeu, il ne vous enverra pas de spam."</p>
             <p>"Le fournisseur d'authentification "<a href="https://auth0.com/">Auth0</a>" peut conserver votre adresse IP pendant une durée indéfinie"</p>
             <p>"En cas de tentative de piratage ou d'abus, toutes les informations vous concernant seront transmises aux autorités compétentes."</p>
-                                    
+            <div style="block:inline">
+                "J'accepte ces conditions et je m'enregistre: "
+                <Checkbox checked=accept_register set_checked=set_accept_register />
+                <LoginLink disabled=Signal::derive(disable_register)>"S'enregistrer"</LoginLink>  
+            </div>
         </div>
-        <div>
-            "J'accepte ces conditions et je m'enregistre: "
-            <Checkbox checked=accept_register set_checked=set_accept_register />
-            <LoginLink disabled=Signal::derive(disable_register)>"S'enregistrer"</LoginLink>  
-        </div>
-        </Stack>
     }
 }
 
@@ -82,7 +79,7 @@ pub fn Description() -> impl IntoView {
 #[component]
 pub fn Home() -> impl IntoView {
     view! {
-        <div style="padding: 3em;">
+        <div id="home">
             <Collapsibles default_on_open=OnOpen::CloseOthers>
                 <Stack spacing=Size::Em(3.0)>
                     <Authenticated unauthenticated=move || view! {

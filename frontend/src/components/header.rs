@@ -16,7 +16,7 @@ pub fn Header() -> impl IntoView {
                 
                 <Skeleton animated=false>
                     <Link  href="/">
-                        <H2>Anomaly4</H2>
+                        <H1>Anomaly4</H1>
                     </Link>
                 </Skeleton>
                 <Authenticated loading=|| view! {
@@ -24,7 +24,7 @@ pub fn Header() -> impl IntoView {
 
                 } >
                     <Skeleton animated=false>
-                        <H2 style="display: inline;">Game</H2>
+                        <H1 style="display: inline;">Le Jeu</H1>
                     </Skeleton>
                 </Authenticated>
             
@@ -40,12 +40,12 @@ pub fn Header() -> impl IntoView {
             </Skeleton>
                     <Authenticated unauthenticated=move || {
                         view! { 
-                            <Skeleton  width=Size::Em(8.0) animated=false>
+                            <Skeleton  width=Size::Em(10.0) animated=false>
                             <LoginLink>Sign in</LoginLink> 
                         </Skeleton>                       
                         }
                     }>
-                    <Skeleton  width=Size::Em(15.0) animated=false>
+                    <Skeleton  width=Size::Em(24.0) animated=false>
                     <LogoutLink>Sign out</LogoutLink>
                     </Skeleton>
                     </Authenticated>

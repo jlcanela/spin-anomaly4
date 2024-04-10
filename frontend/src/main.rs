@@ -123,39 +123,6 @@ pub fn AppWithRouter() -> impl IntoView {
         // button, based on the state.
         <MakeAuth0 base_url = base_url config_url = config_url loading = || view! { <div>Loading Config</div>}>
             <Header/>
-            // <div>
-            //     <Authenticated unauthenticated=move || {
-            //         view! {
-            //             <LoginLink class="text-login">Sign in</LoginLink>
-            //         }
-            //     }>
-            //         <LogoutLink class="text-logout">Sign Out</LogoutLink>
-            //     </Authenticated>
-            // </div>
-            // <Grid spacing=Size::Em(0.6)>
-            //     <Row>
-            //         <Col md=3 sm=4 xs=6>
-            //             <Skeleton animated=false>"Item 1"</Skeleton>
-            //         </Col>
-            //         <Col md=3 sm=4 xs=6>
-            //             <Skeleton animated=false>"Item 2"</Skeleton>
-            //         </Col>
-            //         <Col md=3 sm=4 xs=6>
-            //             <Skeleton animated=false>"Item 3"</Skeleton>
-            //         </Col>
-            //         <Col md=3 sm=12 xs=6>
-            //             <Skeleton animated=false>"Item 4"</Skeleton>
-            //         </Col>
-            //     </Row>
-            //     <Row>
-            //         <Col md=8 sm=6 xs=12>
-            //             <Skeleton animated=false>"Item 5"</Skeleton>
-            //         </Col>
-            //         <Col md=4 sm=6 xs=12>
-            //             <Skeleton animated=false>"Item 6"</Skeleton>
-            //         </Col>
-            //     </Row>
-            // </Grid>
             <Routes>
                 <Route path="/" view=move || view! { <Home/> }/>
                 
