@@ -1,51 +1,17 @@
 use std::vec;
 
-//use api::Star;
+use api::Star;
 use leptonic::prelude::*;
-
 use leptos::*;
-//use leptos_oidc::*;
-use api::{Order, Star};
-use reqwest::Response;
 
-type ArrStars = Vec<Star>;
+use crate::api::api::Api;
 
-async fn fetch() -> ArrStars {
-    let res: Response = match reqwest::get("http://127.0.0.1:3000/api/stars").await {
-        Ok(res) => res,
-        _ => return vec!()
-    };
-    match res.json().await {
-        Ok(stars) => stars,
-        _ => vec!()
-    }
-
+async fn fetch() -> Vec<Star> {
+    expect_context::<Api>().fetch().await
 }
 
-async fn order(o: &Order) {
-    // let res: Response = match reqwest::post("http://127.0.0.1:3000/api/stars").body(&o).await {
-    //     Ok(res) => res,
-    //     _ => return ()
-    // };
-    let json = serde_json::to_string(o).unwrap();
-    let url = "http://127.0.0.1:3000/api/order".to_string();
-    let client = reqwest::Client::new();
-
-    let _response = client
-        .post(url)
-        .header("Content-Type", "application/json")
-        .body(json)
-        .send()
-        .await;
-    /*match res.json().await {
-        Ok(stars) => stars,
-        _ => vec!()
-    }*/
-}
-
-async fn produce_order(star_id: i32)  {
-    let cmd = Order::Produce(star_id);
-    order(&cmd).await;
+async fn produce_order(star_id: i32) {
+    expect_context::<Api>().produce_order(star_id.clone()).await
 }
 
 #[component]

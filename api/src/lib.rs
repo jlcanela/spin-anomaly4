@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub struct Star {
     pub id: i32,
@@ -21,3 +20,25 @@ pub enum Order {
     Colonize(i32),
     Move(i32, i32, i32),
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum ConfigError {
+    FetchError,
+    ParseError,
+}
+
+impl ToString for ConfigError {
+    fn to_string(&self) -> String {
+        match self {
+            ConfigError::FetchError => "Fetch error".to_string(),
+            ConfigError::ParseError => "Parse error".to_string(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct WebConfig {
+    pub client_id: String,
+    pub auth0_domain: String,
+}
+

@@ -7,6 +7,7 @@ use url::Url;
 
 mod components;
 mod pages;
+mod api;
 
 use crate::components::auth0::MakeAuth0;
 use crate::components::error_template::{AppError, ErrorTemplate};

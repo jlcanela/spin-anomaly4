@@ -1,30 +1,10 @@
+use api::{ConfigError, WebConfig};
 use leptos::*;
 use leptos_oidc::{Auth, AuthParameters};
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum ConfigError {
-    FetchError,
-    ParseError,
-}
-
-impl ToString for ConfigError {
-    fn to_string(&self) -> String {
-        match self {
-            ConfigError::FetchError => "Fetch error".to_string(),
-            ConfigError::ParseError => "Parse error".to_string(),
-        }
-    }
-}
-
 use serde_json;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct WebConfig {
-    pub client_id: String,
-    pub auth0_domain: String,
-}
+use crate::api::api::Api;
 
 
 fn make_auth_params(client_id: String, auth0_domain: String, base_url: String) -> AuthParameters {
@@ -62,8 +42,11 @@ async fn auth(base_url: String, config_url: String) -> bool {
     let config = load_config(config_url).await;
     if config.is_ok() {
         let c = config.unwrap();
-        let auth_parameters = make_auth_params(c.client_id.clone(), c.auth0_domain.clone(), base_url);
+        let auth_parameters = make_auth_params(c.client_id.clone(), c.auth0_domain.clone(), base_url.clone());
         let _auth = Auth::init(auth_parameters);
+
+        provide_context(Api::new(base_url));
+
         return true;
     } else {
         return false;
@@ -91,3 +74,4 @@ pub fn MakeAuth0(
         </Suspense>
     }
 }
+
