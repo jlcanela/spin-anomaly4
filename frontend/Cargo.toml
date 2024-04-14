@@ -22,6 +22,7 @@ serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.115"
 tracing-subscriber-wasm = "0.1.0"
 url = "2.5.0"
+api = { path = "../api" }
 
 [package.metadata.leptonic]
 # REQUIRED: Leptonic's build-script will copy the Leptonic themes to this directory.

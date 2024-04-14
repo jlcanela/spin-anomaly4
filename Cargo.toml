@@ -4,7 +4,7 @@ resolver = "2"
 
 members = [
     "backend",
-    "frontend"
-]
+    "frontend",
+    "api"]
 
 #exclude = ["backend"]

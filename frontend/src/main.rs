@@ -4,7 +4,6 @@ use leptos_meta::*;
 use leptos_router::*;
 
 use url::Url;
-//use leptos_i18n::provide_i18n_context;
 
 mod components;
 mod pages;

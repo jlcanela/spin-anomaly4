@@ -1,20 +1,51 @@
 use std::vec;
 
+//use api::Star;
 use leptonic::prelude::*;
 
 use leptos::*;
 //use leptos_oidc::*;
+use api::{Order, Star};
+use reqwest::Response;
 
-#[derive(Clone, Debug, PartialEq, Hash, Eq)]
-pub struct Star {
-    pub id: i32,
-    pub name: String,
-    pub owner: String,
-    pub x: i32,
-    pub y: i32,
-    pub shuttles: i32,
-    pub dev: i32,
-    pub dev_max: i32,
+type ArrStars = Vec<Star>;
+
+async fn fetch() -> ArrStars {
+    let res: Response = match reqwest::get("http://127.0.0.1:3000/api/stars").await {
+        Ok(res) => res,
+        _ => return vec!()
+    };
+    match res.json().await {
+        Ok(stars) => stars,
+        _ => vec!()
+    }
+
+}
+
+async fn order(o: &Order) {
+    // let res: Response = match reqwest::post("http://127.0.0.1:3000/api/stars").body(&o).await {
+    //     Ok(res) => res,
+    //     _ => return ()
+    // };
+    let json = serde_json::to_string(o).unwrap();
+    let url = "http://127.0.0.1:3000/api/order".to_string();
+    let client = reqwest::Client::new();
+
+    let _response = client
+        .post(url)
+        .header("Content-Type", "application/json")
+        .body(json)
+        .send()
+        .await;
+    /*match res.json().await {
+        Ok(stars) => stars,
+        _ => vec!()
+    }*/
+}
+
+async fn produce_order(star_id: i32)  {
+    let cmd = Order::Produce(star_id);
+    order(&cmd).await;
 }
 
 #[component]
@@ -23,14 +54,16 @@ pub fn OwnedStars() -> impl IntoView {
     let (current_star_id, set_current_star_id) = create_signal(Option::<u32>::None);
     let (confirm_order, set_confirm_order) = create_signal(false);
 
-    let (get_stars, _) = create_signal(vec!(
-        Star { id: 0, name: "Bob".to_string(), owner: "Yellow".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 },
-        Star { id: 1, name: "Kevin".to_string(), owner: "Green".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 },
-        Star { id: 2, name: "Stuart".to_string(), owner: "Blue".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 }));
+    let (version, set_version) = create_signal(0);
+
+    let resource_stars = create_resource(move ||version.get(), move |_| fetch() );
 
     let (nb_shuttles_move, set_nb_shuttles_move) = create_signal(0.0);
 
     let (nb_shuttles_attack, set_nb_shuttles_attack) = create_signal(0.0);
+
+    let produce = create_action( move |star_id: &i32| produce_order(star_id.clone()) );
+
 
     let buttons = move || {
         if current_star_id.get().is_some() {
@@ -43,8 +76,11 @@ pub fn OwnedStars() -> impl IntoView {
                                 <div>
                             "Produire des navettes sur Nogami"<br/>"Coût: 8 Points"
                                 </div>
-                                <Button on_click=move |_| {
+                                <Button on_click=move |_|  {
+                                    let star_id = current_star_id.get().unwrap().clone() as i32;
+                                    produce.dispatch(star_id);
                                     tracing::info!("Produce order sent");
+                                    set_version.update(|v| *v = *v + 1);
                                 }>"Produire"</Button>
                             </Stack>
                         </Tab>
@@ -134,7 +170,8 @@ pub fn OwnedStars() -> impl IntoView {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <For each=move ||get_stars.get() key=|x| x.clone() children=move |star| view! {
+                        <Transition>
+                            <For each=move ||resource_stars.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
                                 <TableRow>
                                     <TableCell>{star.name}</TableCell>
                                     <TableCell>"("{star.x}", "{star.y}")"</TableCell>
@@ -146,7 +183,8 @@ pub fn OwnedStars() -> impl IntoView {
                                         tracing::info!("Star selected: {}", star.id);
                                     }>"Sélectionner"</Button></TableCell>
                                 </TableRow>
-                        }/>
+                            }/>
+                        </Transition>
                     </TableBody>
                 </Table>
             </TableContainer>

@@ -7,7 +7,7 @@ authors = ["jlcanela <jlcanelam@gmail.com>"]
 description = ""
 
 [[trigger.http]]
-route = "/api/config"
+route = "/api/..."
 component = "backend"
 
 [variables]
