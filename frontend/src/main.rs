@@ -14,6 +14,7 @@ use crate::components::error_template::{AppError, ErrorTemplate};
 use crate::components::header::Header;
 use crate::pages::game::Game;
 use crate::pages::home::Home;
+use crate::pages::admin::Admin;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -133,6 +134,10 @@ pub fn AppWithRouter() -> impl IntoView {
                 <Route
                 path="/game"
                 view=|| view! { <Game/> }
+                />
+                <Route
+                path="/admin"
+                view=|| view! { <Admin/> }
                 />
             </Routes>
         </MakeAuth0>

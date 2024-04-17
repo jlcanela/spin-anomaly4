@@ -1,16 +1,17 @@
-use api::{Order, Star};
+use api::{Order, Star, WebConfig};
 use reqwest::Response;
 
 #[derive(Clone)]
 pub struct Api {
     pub base_url: String,
+    pub config: WebConfig,
 }
 
 type ArrStars = Vec<Star>;
 
 impl Api {
-    pub fn new(base_url: String) -> Self {
-        Self { base_url }
+    pub fn new(base_url: String, config: WebConfig) -> Self {
+        Self { base_url, config }
     }
 
     fn url_stars(&self) -> String {
@@ -19,6 +20,10 @@ impl Api {
 
     fn url_order(&self) -> String {
         format!("{}/api/order", self.base_url)
+    }
+
+    fn url_init(&self) -> String {
+        format!("{}/api/init", self.base_url)
     }
 
     pub async fn fetch(self: &Self) -> ArrStars {
@@ -40,6 +45,17 @@ impl Api {
             .post(self.url_order())
             .header("Content-Type", "application/json")
             .body(json)
+            .send()
+            .await;
+    }
+
+    pub async fn init_game(self: &Self) {
+        let client = reqwest::Client::new();
+
+        let _response = client
+            .post(self.url_init())
+            .header("Content-Type", "application/json")
+            .body("{}")
             .send()
             .await;
     }

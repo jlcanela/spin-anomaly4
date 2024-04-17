@@ -45,7 +45,7 @@ async fn auth(base_url: String, config_url: String) -> bool {
         let auth_parameters = make_auth_params(c.client_id.clone(), c.auth0_domain.clone(), base_url.clone());
         let _auth = Auth::init(auth_parameters);
 
-        provide_context(Api::new(base_url));
+        provide_context(Api::new(base_url, c));
 
         return true;
     } else {

@@ -33,6 +33,7 @@ fn handle_my_rust_app(req: Request) -> anyhow::Result<impl IntoResponse> {
         "/api/config" => handle_config(req),
         "/api/stars" => handle_stars(req),
         "/api/order" => handle_order(req),
+        "/api/init" => handle_init(req),
         _ => {
             println!("404 path: {:?}", req.path());
             return404(req)
@@ -108,5 +109,14 @@ fn handle_order(_req: Request) -> Result<Response, String> {
     .status(200)
     .header("content-type", "application/json")
     .body("{}")
+    .build())
+}
+
+/// A simple Spin HTTP component.
+fn handle_init(_req: Request) -> Result<Response, String> {
+    Ok(Response::builder()
+    .status(200)
+    .header("content-type", "application/json")
+    .body("{ \"result\": \"ok\" }")
     .build())
 }

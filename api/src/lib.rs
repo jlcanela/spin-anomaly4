@@ -1,3 +1,6 @@
+mod jwks;
+pub mod jwt; 
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
@@ -40,5 +43,12 @@ impl ToString for ConfigError {
 pub struct WebConfig {
     pub client_id: String,
     pub auth0_domain: String,
+}
+
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Status {
+    pub name: String,
+    pub points: i32,
 }
 
