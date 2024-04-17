@@ -118,7 +118,7 @@ pub fn AppWithRouter() -> impl IntoView {
 
     let base_url = base_url();
     let config_url = format!("{}/api/config", base_url);
-
+    
     view! {
         // This is an example for a navbar where you have a login and logout
         // button, based on the state.

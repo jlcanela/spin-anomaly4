@@ -54,6 +54,27 @@ async fn auth(base_url: String, config_url: String) -> bool {
 }
 
 #[component]
+pub fn TakesChildren<F, IV>(
+    /// Takes a function (type F) that returns anything that can be
+    /// converted into a View (type IV)
+    render_prop: F,
+    /// `children` takes the `Children` type
+    children: Children,
+) -> impl IntoView
+where
+    F: Fn() -> IV,
+    IV: IntoView,
+{
+    view! {
+        <h2>"Render Prop"</h2>
+        {render_prop()}
+
+        <h2>"Children"</h2>
+        {children()}
+    }
+}
+
+#[component]
 pub fn MakeAuth0(
     base_url: String, 
     config_url: String,
@@ -62,16 +83,23 @@ pub fn MakeAuth0(
     loading: ViewFn) -> impl IntoView
     {
   
-    let base_url = base_url.clone();
-    let config = create_blocking_resource(|| (),  move |_|  { 
-        auth(base_url.clone(), config_url.clone())
-    });
-    let view = store_value(children);
+        let base_url = base_url.clone();
+        let config = create_blocking_resource(|| (),  move |_|  { 
+            auth(base_url.clone(), config_url.clone())
+        });
+        let view = store_value(children);
 
-    view! {
-        <Suspense fallback=loading>     
-            {move || config.map(|auth| if *auth { view.with_value(|view| view().into_view()) } else { view! { <div>Error loading Auth</div>}.into_view() } )} 
-        </Suspense>
-    }
+        view! {
+            <Suspense fallback=loading>     
+                {move || {
+                    config.map(|auth| if *auth { 
+                        //tracing::info!("Rendering MakeAuth0 Suspense2");
+                        view.with_value(|view| view().into_view()) 
+                    } else { 
+                        view! { <div>Error loading Auth</div>}.into_view() 
+                    } )
+                }}
+            </Suspense>
+        }
 }
 

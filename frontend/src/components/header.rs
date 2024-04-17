@@ -1,14 +1,20 @@
 use leptonic::prelude::*;
 use leptos::*;
 use leptos_oidc::*;
+use leptos_use::storage::use_local_storage;
+use leptos_use::utils::FromToStringCodec;
 
 use crate::api::api::Api;
 use crate::components::flags::*;
 use crate::components::auth_button::{LoginLink, LogoutLink};
 
-pub async fn is_admin(args: (String, String,  String)) -> bool {
-    let (domain, audience , token) = args;
-    api::jwt::has_role(domain, audience, token, "Admin".to_string()).await.unwrap_or(false)
+pub async fn jwks(domain: &String) -> Result<String, String> {
+    api::jwks::load_jwks(domain).await
+}
+
+pub async fn is_admin(jwks: &String, audience: &String, token: &String) -> bool {
+    let admin_nole = "Admin".to_string(); 
+    api::jwt::has_role(jwks, audience, token, &admin_nole).await.unwrap_or(false)
 }
 
 
@@ -16,24 +22,49 @@ pub async fn is_admin(args: (String, String,  String)) -> bool {
 #[component]
 pub fn AdminButton() -> impl IntoView {
     
-    let is_admin_params = || {
+    let (local_jwk, local_jwk_set, _) = use_local_storage::<String, FromToStringCodec>("jwk");
+
+    spawn_local(async move {
+        let current = local_jwk.get_untracked();
+
+        if current.is_empty() {
+            let api = use_context::<Api>();
+            match api {
+                Some(api) => {
+                    let domain = api.config.auth0_domain;
+                    let j = jwks(&domain).await.ok();
+                    local_jwk_set.set(j.unwrap().to_string());
+                },
+                None => {}
+            }
+        }
+        
+    });
+
+    let params = move || {
         let auth = use_context::<Auth>()?;
         let api = use_context::<Api>()?;
         let id_token = auth.id_token()?;
-        let domain = api.config.auth0_domain;
         let audience = api.config.client_id;
-        Some((domain, audience, id_token))
+        let jwks = local_jwk.get();
+        Some((jwks, audience, id_token))
     };
 
-    let is_admin_resource = create_resource(is_admin_params,   move|p| async {
-        match p {
-            Some(params) => {
-                let res = is_admin(params).await;
-                res
-            },
-            None => false
+    let memo = create_memo(move |m: Option<&(String, String, String)>| {
+        match m {
+            Some(pp) => pp.clone(),
+            None => params().unwrap()
         }
-    }  );
+    });
+
+    let is_admin_resource = create_resource(move ||memo.get(),   move|p| async {
+        match p {
+            (jwks, audience, token) => {
+                let res = is_admin(&jwks, &audience, &token).await;
+                res
+            }
+        }
+    });
 
     view! {
         {
@@ -56,7 +87,7 @@ pub fn AdminButton() -> impl IntoView {
 // Feel free to do more complicated things here than just displaying the error.
 #[component]
 pub fn Header() -> impl IntoView {
-
+    
     view! {
         <div id="header" style="position: relative">
             <Stack class="header-anomaly4" orientation=StackOrientation::Horizontal spacing=Size::Em(0.6)>

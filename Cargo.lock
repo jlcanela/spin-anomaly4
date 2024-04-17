@@ -569,9 +569,11 @@ version = "0.1.0"
 dependencies = [
  "api",
  "console_error_panic_hook",
+ "jsonwebtoken",
  "jwt",
  "leptonic",
  "leptos",
+ "leptos-use",
  "leptos_meta",
  "leptos_oidc",
  "leptos_router",
@@ -1570,9 +1572,9 @@ dependencies = [
 
 [[package]]
 name = "leptos-use"
-version = "0.10.6"
+version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15ed5b0068731f9506d0f4cc9fd280ea424cb1f3e56d8d4c66efc1b8abae25e8"
+checksum = "9d6be6f1d02c3277f03a55c4a05ee5a069ea75ec5323c4415f6efed69cb5acea"
 dependencies = [
  "async-trait",
  "cfg-if",
