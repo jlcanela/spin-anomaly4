@@ -12,20 +12,21 @@ pub async fn is_admin(args: (String, String,  String)) -> bool {
 }
 
 
-fn is_admin_params() -> Option<(String, String, String)>  {
-    let auth = use_context::<Auth>()?;
-    let api = use_context::<Api>()?;
-    let id_token = auth.id_token()?;
-    let domain = api.config.auth0_domain;
-    let audience = api.config.client_id;
-    Some((domain, audience, id_token))
-}
 
 #[component]
 pub fn AdminButton() -> impl IntoView {
-             
-    let is_admin_resource = create_resource(||(),  move |_| async {
-        match is_admin_params() {
+    
+    let is_admin_params = || {
+        let auth = use_context::<Auth>()?;
+        let api = use_context::<Api>()?;
+        let id_token = auth.id_token()?;
+        let domain = api.config.auth0_domain;
+        let audience = api.config.client_id;
+        Some((domain, audience, id_token))
+    };
+
+    let is_admin_resource = create_resource(is_admin_params,   move|p| async {
+        match p {
             Some(params) => {
                 let res = is_admin(params).await;
                 res
