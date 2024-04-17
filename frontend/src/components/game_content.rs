@@ -1,14 +1,14 @@
 use std::vec;
 
-use api::Star;
+use api::{Order, Star};
 use leptonic::prelude::*;
 use leptos::*;
 
 use crate::api::api::Api;
 
 
-async fn produce_order(star_id: i32) {
-    expect_context::<Api>().produce_order(star_id.clone()).await
+async fn post_order(cmd: Order) -> () {
+    expect_context::<Api>().send_order(&cmd).await
 }
 
 #[component]
@@ -21,8 +21,15 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
 
     let (nb_shuttles_attack, set_nb_shuttles_attack) = create_signal(0.0);
 
-    let produce = create_action( move |star_id: &i32| produce_order(star_id.clone()) );
-
+    let issue_order = create_action( move |cmd: &Order| {
+        let star_id = current_star_id.get().unwrap().clone() as i32;
+        let mut cmd = cmd.clone();
+        cmd.with_star_id(star_id);
+        async move {
+            post_order(cmd).await;
+            set_version.update(|v| *v = *v + 1);
+        }
+    });
 
     let buttons = move || {
         if current_star_id.get().is_some() {
@@ -35,11 +42,8 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
                                 <div>
                             "Produire des navettes sur Nogami"<br/>"Coût: 8 Points"
                                 </div>
-                                <Button on_click=move |_|  {
-                                    let star_id = current_star_id.get().unwrap().clone() as i32;
-                                    produce.dispatch(star_id);
-                                    tracing::info!("Produce order sent");
-                                    set_version.update(|v| *v = *v + 1);
+                                <Button on_click=move |_|  {                                    
+                                    issue_order.dispatch(Order::produce(0));
                                 }>"Produire"</Button>
                             </Stack>
                         </Tab>
@@ -52,7 +56,7 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
                                 //"Dev ({3}) updated to: {2}"
                                 </div>
                                 <Button on_click=move |_| {
-                                    tracing::info!("Loot order sent");
+                                    issue_order.dispatch(Order::loot(0));
                                 }>"Piller"</Button>
                             </Stack>
                         </Tab>
@@ -64,8 +68,20 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
                                     //"Dev ({2}) updated to: {3}."
                                 </div>
                                 <Button on_click=move |_| {
-                                    tracing::info!("Develop order sent");
+                                    issue_order.dispatch(Order::develop(0));
                                 }>"Développer"</Button>
+                            </Stack>
+                        </Tab>
+                        <Tab name="colonize" label=view! { <div>"Coloniser"</div> }.into_view()>
+                            <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
+                                <div>
+                                    "Coloniser Nogami"<br/>
+                                    "Coût: 8 Points & 3 Navettes"<br/>
+                                    //"Dev ({2}) updated to: {3}."
+                                </div>
+                                <Button on_click=move |_| {
+                                    issue_order.dispatch(Order::colonize(0));
+                                }>"Coloniser"</Button>
                             </Stack>
                         </Tab>
                         <Tab name="move" label=view! { <div>"Déplacer"</div> }.into_view()>
@@ -78,9 +94,8 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
                                         <NumberInput min=0.0 max=10.0 step=1.0 get=nb_shuttles_move set=set_nb_shuttles_move placeholder="Sélectionnez le nombre de navettes à déplacer"/>
                                     </Stack>
                                 </div>
-                                <Button on_click=move |_| {
-                                    tracing::info!("Move order sent");
-                                }>"Déplacer"</Button>
+                                <Button disabled=true on_click=move |_| {
+                                }>"Déplacer"</Button>                            
                             </Stack>
                         </Tab>
                         <Tab name="attack" label=view! { <div>"Attaquer"</div> }.into_view()>
@@ -93,8 +108,7 @@ pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32
                                         <NumberInput min=0.0 max=10.0 step=1.0 get=nb_shuttles_attack set=set_nb_shuttles_attack placeholder="Sélectionnez le nombre de navettes pour attaquer"/>
                                     </Stack>
                                 </div>
-                                <Button on_click=move |_| {
-                                    tracing::info!("Attack order sent");
+                                <Button disabled=true on_click=move |_| {
                                 }>"Attaquer"</Button>
                             </Stack>
                         </Tab>

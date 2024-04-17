@@ -21,16 +21,28 @@ pub fn Admin() -> impl IntoView {
 
     view! {
         <Authenticated>
+            <div id="game-content">
+                <Tabs mount=Mount::Once>
+                    <Tab name="games" label="Jeux".into_view()>
+                        <h1>Jeux</h1>
+                        <Button on_click=move |_| {
+                            let dummy = "".to_string();
+                            init.dispatch(dummy.clone());
+                        }>Init</Button>
+                        <Button on_click=move |_| {
+                            let dummy = "".to_string();
+                            clear.dispatch(dummy.clone());
+                        }>Clear</Button>
+                    </Tab>
+                    <Tab name="players" label="Joueurs".into_view()>
+                        <h1>Joueurs</h1>
+                    </Tab>
+                    //<Tab name="star-map" label="Star Map".into_view()>"Star Map"</Tab>
+                    //<Tab name="diplomacy" label="Diplomacy".into_view()>"Diplomacy"</Tab>
+                </Tabs>
+            </div>   
         <div id="admin">
-            <h1>Admin</h1>
-            <Button on_click=move |_| {
-                let dummy = "".to_string();
-                init.dispatch(dummy.clone());
-            }>Init</Button>
-            <Button on_click=move |_| {
-                let dummy = "".to_string();
-                clear.dispatch(dummy.clone());
-            }>Clear</Button>
+
         </div>
         </Authenticated>            
     }
