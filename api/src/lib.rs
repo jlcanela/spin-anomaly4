@@ -1,4 +1,4 @@
-mod jwks;
+pub mod jwks;
 pub mod jwt; 
 
 use serde::{Deserialize, Serialize};

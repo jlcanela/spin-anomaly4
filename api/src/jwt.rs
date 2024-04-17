@@ -2,6 +2,7 @@ use jsonwebtoken::{decode, decode_header, jwk::AlgorithmParameters, Algorithm, D
 use serde::{Deserialize, Serialize};
 
 use crate::jwks::load_jwks;
+use jsonwebtoken::jwk::JwkSet;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Roles {
@@ -15,14 +16,18 @@ struct Claims {
    anomaly4namespace: Roles
 }
 
-pub async fn has_role(domain: String, audience: String, id_token: String, role: String) -> Result<bool, String> {
-    let roles = roles(&domain, &audience, &id_token).await?;
+pub async fn has_role(jwks: &String, audience: &String, id_token: &String, role: &String) -> Result<bool, String> {
+    let roles = roles(jwks, &audience, &id_token).await?;
     Ok(roles.contains(&role))
 }
 
-pub async fn roles(domain: &String, audience: &String, id_token: &String) -> Result<Vec<String>, String> {
+pub async fn jwks(domain: &String) -> Result<String, String> {
+    load_jwks(domain).await
+}
 
-    let jwks = load_jwks(domain).await?;
+pub async fn roles(jwks_string: &String, audience: &String, id_token: &String) -> Result<Vec<String>, String> {
+
+    let jwks = serde_json::from_str::<JwkSet>(&jwks_string).map_err(|e| e.to_string())?;
 
     let header = decode_header(id_token).map_err(|e| format!("roles: {:?} 3", e.to_string()))?;
     let Some(kid) = header.kid else {

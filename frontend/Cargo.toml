@@ -24,6 +24,8 @@ tracing-subscriber-wasm = "0.1.0"
 url = "2.5.0"
 api = { path = "../api" }
 jwt = "0.16.0"
+jsonwebtoken = "9.3.0"
+leptos-use = "0.10.7"
 
 [package.metadata.leptonic]
 # REQUIRED: Leptonic's build-script will copy the Leptonic themes to this directory.
