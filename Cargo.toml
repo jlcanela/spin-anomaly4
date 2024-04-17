@@ -6,5 +6,3 @@ members = [
     "backend",
     "frontend",
     "api"]
-
-#exclude = ["backend"]
