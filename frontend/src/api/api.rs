@@ -41,7 +41,7 @@ impl Api {
         }
     }
 
-    async fn order(self: &Self, o: &Order) {
+    pub async fn send_order(self: &Self, o: &Order) {
         let json = serde_json::to_string(o).unwrap();
         let client = reqwest::Client::new();
 
@@ -75,8 +75,4 @@ impl Api {
             .await;
     }
 
-    pub async fn produce_order(self: &Self, star_id: i32) {
-        let cmd = Order::Produce(star_id);
-        self.order(&cmd).await;
-    }
 }
