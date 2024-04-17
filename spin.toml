@@ -30,6 +30,7 @@ watch = ["frontend/src/**/*.rs", "frontend/Cargo.toml", "frontend/Trunk.toml"]
 [component.backend]
 source = "target/wasm32-wasi/release/backend.wasm"
 allowed_outbound_hosts = []
+key_value_stores = ["default"]
 
 [component.backend.build]
 command = "cargo build -p backend --target wasm32-wasi --release"

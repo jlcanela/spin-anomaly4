@@ -1,9 +1,8 @@
-use api::{ConfigError, WebConfig};
 use leptos::*;
 use leptos_oidc::{Auth, AuthParameters};
-
 use serde_json;
 
+use api::{ConfigError, WebConfig};
 use crate::api::api::Api;
 
 
@@ -38,7 +37,7 @@ async fn load_config(url: String) -> Result<WebConfig, ConfigError> {
     Ok(config)
 }
 
-async fn auth(base_url: String, config_url: String) -> bool {
+pub async fn auth(base_url: String, config_url: String) -> bool {
     let config = load_config(config_url).await;
     if config.is_ok() {
         let c = config.unwrap();
@@ -52,54 +51,3 @@ async fn auth(base_url: String, config_url: String) -> bool {
         return false;
     }
 }
-
-#[component]
-pub fn TakesChildren<F, IV>(
-    /// Takes a function (type F) that returns anything that can be
-    /// converted into a View (type IV)
-    render_prop: F,
-    /// `children` takes the `Children` type
-    children: Children,
-) -> impl IntoView
-where
-    F: Fn() -> IV,
-    IV: IntoView,
-{
-    view! {
-        <h2>"Render Prop"</h2>
-        {render_prop()}
-
-        <h2>"Children"</h2>
-        {children()}
-    }
-}
-
-#[component]
-pub fn MakeAuth0(
-    base_url: String, 
-    config_url: String,
-    children: Box<dyn Fn() -> Fragment>, 
-    #[prop(optional, into)] 
-    loading: ViewFn) -> impl IntoView
-    {
-  
-        let base_url = base_url.clone();
-        let config = create_blocking_resource(|| (),  move |_|  { 
-            auth(base_url.clone(), config_url.clone())
-        });
-        let view = store_value(children);
-
-        view! {
-            <Suspense fallback=loading>     
-                {move || {
-                    config.map(|auth| if *auth { 
-                        //tracing::info!("Rendering MakeAuth0 Suspense2");
-                        view.with_value(|view| view().into_view()) 
-                    } else { 
-                        view! { <div>Error loading Auth</div>}.into_view() 
-                    } )
-                }}
-            </Suspense>
-        }
-}
-

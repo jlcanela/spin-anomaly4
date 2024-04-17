@@ -1,4 +1,4 @@
-use api::{Order, Star, WebConfig};
+use api::{Order, Situation, WebConfig};
 use reqwest::Response;
 
 #[derive(Clone)]
@@ -7,15 +7,15 @@ pub struct Api {
     pub config: WebConfig,
 }
 
-type ArrStars = Vec<Star>;
 
 impl Api {
     pub fn new(base_url: String, config: WebConfig) -> Self {
         Self { base_url, config }
     }
 
-    fn url_stars(&self) -> String {
-        format!("{}/api/stars", self.base_url)
+
+    fn url_situation(&self) -> String {
+        format!("{}/api/situation", self.base_url)
     }
 
     fn url_order(&self) -> String {
@@ -26,14 +26,18 @@ impl Api {
         format!("{}/api/init", self.base_url)
     }
 
-    pub async fn fetch(self: &Self) -> ArrStars {
-        let res: Response = match reqwest::get(self.url_stars()).await {
+    fn url_clear(&self) -> String {
+        format!("{}/api/clear", self.base_url)
+    }
+
+    pub async fn situation(self: &Self) -> Option<Situation> {
+        let res: Response = match reqwest::get(self.url_situation()).await {
             Ok(res) => res,
-            _ => return vec![],
+            _ => return None,
         };
         match res.json().await {
-            Ok(stars) => stars,
-            _ => vec![],
+            Ok(situation) => situation,
+            _ => None,
         }
     }
 
@@ -54,6 +58,17 @@ impl Api {
 
         let _response = client
             .post(self.url_init())
+            .header("Content-Type", "application/json")
+            .body("{}")
+            .send()
+            .await;
+    }
+
+    pub async fn clear_game(self: &Self) {
+        let client = reqwest::Client::new();
+
+        let _response = client
+            .post(self.url_clear())
             .header("Content-Type", "application/json")
             .body("{}")
             .send()

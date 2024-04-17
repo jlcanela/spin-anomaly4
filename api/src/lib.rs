@@ -1,7 +1,11 @@
 pub mod jwks;
 pub mod jwt; 
 
+use std::time::SystemTime;
+
+use chrono::DateTime;
 use serde::{Deserialize, Serialize};
+
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub struct Star {
@@ -13,6 +17,31 @@ pub struct Star {
     pub shuttles: i32,
     pub dev: i32,
     pub dev_max: i32,
+}
+
+
+#[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
+pub struct Player {
+    pub id: i32,
+    pub name: String, 
+    pub points: i32,
+    pub last_update: SystemTime,
+    pub sub: Option<String>,
+}
+
+impl Default for Player {
+    fn default() -> Self {
+        let dt = DateTime::parse_from_rfc3339("2000-01-01T08:00:00-00:00").unwrap();
+        let st = SystemTime::from(dt);
+        Player { id: 0, name: "Empire".to_string(), points: 0, last_update: st , sub: None }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
+pub struct Situation {
+    pub player: Player, 
+    pub stars: Vec<Star>,
+    pub radar: Vec<Star>,
 }
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]

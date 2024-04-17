@@ -6,23 +6,16 @@ use leptos::*;
 
 use crate::api::api::Api;
 
-async fn fetch() -> Vec<Star> {
-    expect_context::<Api>().fetch().await
-}
 
 async fn produce_order(star_id: i32) {
     expect_context::<Api>().produce_order(star_id.clone()).await
 }
 
 #[component]
-pub fn OwnedStars() -> impl IntoView {
+pub fn OwnedStars(stars: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32>) -> impl IntoView {
 
     let (current_star_id, set_current_star_id) = create_signal(Option::<u32>::None);
     let (confirm_order, set_confirm_order) = create_signal(false);
-
-    let (version, set_version) = create_signal(0);
-
-    let resource_stars = create_resource(move ||version.get(), move |_| fetch() );
 
     let (nb_shuttles_move, set_nb_shuttles_move) = create_signal(0.0);
 
@@ -137,7 +130,7 @@ pub fn OwnedStars() -> impl IntoView {
                     </TableHeader>
                     <TableBody>
                         <Transition>
-                            <For each=move ||resource_stars.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
+                            <For each=move ||stars.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
                                 <TableRow>
                                     <TableCell>{star.name}</TableCell>
                                     <TableCell>"("{star.x}", "{star.y}")"</TableCell>
@@ -160,11 +153,7 @@ pub fn OwnedStars() -> impl IntoView {
 }
 
 #[component]
-pub fn Radar() -> impl IntoView {
-    let (get_stars, _) = create_signal(vec!(
-        Star { id: 0, name: "Bob".to_string(), owner: "Yellow".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 },
-        Star { id: 1, name: "Kevin".to_string(), owner: "Green".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 },
-        Star { id: 2, name: "Stuart".to_string(), owner: "Blue".to_string(), x: 2, y: 3, shuttles: 4, dev: 5, dev_max: 6 }));
+pub fn Radar(radar: Signal<Option<Vec<Star>>>) -> impl IntoView {
 
     view! {
         <div>
@@ -183,7 +172,7 @@ pub fn Radar() -> impl IntoView {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <For each=move ||get_stars.get() key=|x| x.clone() children=move |star| view! {
+                        <For each=move ||radar.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
                             <TableRow>
                                 <TableCell>{star.name}</TableCell>
                                 <TableCell>{star.owner}</TableCell>
@@ -204,14 +193,14 @@ pub fn Radar() -> impl IntoView {
 }
 
 #[component]
-pub fn GameContent() -> impl IntoView {
+pub fn GameContent(stars: Signal<Option<Vec<Star>>>, radar: Signal<Option<Vec<Star>>>, set_version: WriteSignal<i32>) -> impl IntoView {
     view! {
         <Stack spacing=Size::Em(0.0)>
             <H2>"Vos étoiles"</H2>
             <p>"Sélectionner une étoile pour effectuer une action"</p>
-            <OwnedStars/>
+            <OwnedStars stars = stars set_version = set_version/>
             <H2>"Radar"</H2>
-            <Radar/>
+            <Radar radar = radar />
         </Stack>
     }
 }

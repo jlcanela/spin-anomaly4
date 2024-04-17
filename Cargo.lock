@@ -57,6 +57,7 @@ checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 name = "api"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "jsonwebtoken",
  "jwt",
  "reqwest 0.12.3",
@@ -247,9 +248,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "chrono"
-version = "0.4.37"
+version = "0.4.38"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a0d04d43504c61aa6c7531f1871dd0d418d91130162063b789da00fd7057a5e"
+checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
@@ -568,6 +569,7 @@ name = "frontend"
 version = "0.1.0"
 dependencies = [
  "api",
+ "chrono",
  "console_error_panic_hook",
  "jsonwebtoken",
  "jwt",
