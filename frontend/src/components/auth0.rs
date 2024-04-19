@@ -3,7 +3,7 @@ use leptos_oidc::{Auth, AuthParameters};
 use serde_json;
 
 use api::{ConfigError, WebConfig};
-use crate::api::api::Api;
+use crate::api::Api;
 
 
 fn make_auth_params(client_id: String, auth0_domain: String, base_url: String) -> AuthParameters {
@@ -15,9 +15,9 @@ fn make_auth_params(client_id: String, auth0_domain: String, base_url: String) -
         auth_endpoint: format!("https://{}/authorize", auth0_domain),
         token_endpoint: format!("https://{}/oauth/token", auth0_domain),
         logout_endpoint: format!("https://{}/oidc/logout", auth0_domain),
-        client_id: client_id,
-        redirect_uri: redirect_uri,
-        post_logout_redirect_uri: post_logout_redirect_uri,
+        client_id,
+        redirect_uri,
+        post_logout_redirect_uri,
         scope: Some("openid offline_access".to_string()),
     }
 }
@@ -46,8 +46,8 @@ pub async fn auth(base_url: String, config_url: String) -> bool {
 
         provide_context(Api::new(base_url, c));
 
-        return true;
+        true
     } else {
-        return false;
+        false
     }
 }
