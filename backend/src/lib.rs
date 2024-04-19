@@ -1,3 +1,4 @@
+use api::{OrderFailed, OrderResult};
 use repository::Repository;
 use spin_sdk::http::{IntoResponse, Request, Response};
 use spin_sdk::http_component;
@@ -118,8 +119,18 @@ impl Handlers {
 
     fn handle_order(self: &Self, req: Request) -> Result<Response, String> {
         let order_str = std::str::from_utf8(req.body()).map_err(|e| e.to_string())?;
-        let status = self.repository.order(order_str.to_string()).map(|_| "{}".to_string());
-        self.return_json(||status)
+        let result = self.repository.order(order_str.to_string(), 1);
+        
+        let json = match result {
+            Ok(r) => serde_json::to_string(&r).map_err(|e| e.to_string()),
+            Err(OrderFailed::ServiceFailure(s1, s2)) => {
+                tracing::error!("order failed: {} {}", s1, s2);
+                Err("Service Failure".to_string())
+            }
+            Err(failure) =>
+                serde_json::to_string(&OrderResult::OrderFailed(failure)).map_err(|e| e.to_string()),
+        };
+        self.return_json(||json)
     }
 
     fn handle_init(self: &Self, _req: Request) -> Result<Response, String> {

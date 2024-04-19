@@ -1,4 +1,4 @@
-use api::{Order, Situation, WebConfig};
+use api::{Order, OrderResult, Situation, WebConfig};
 use reqwest::Response;
 
 #[derive(Clone)]
@@ -7,12 +7,10 @@ pub struct Api {
     pub config: WebConfig,
 }
 
-
 impl Api {
     pub fn new(base_url: String, config: WebConfig) -> Self {
         Self { base_url, config }
     }
-
 
     fn url_situation(&self) -> String {
         format!("{}/api/situation", self.base_url)
@@ -41,16 +39,18 @@ impl Api {
         }
     }
 
-    pub async fn send_order(self: &Self, o: &Order) {
+    pub async fn send_order(self: &Self, o: &Order) -> Result<OrderResult, String> {
         let json = serde_json::to_string(o).unwrap();
         let client = reqwest::Client::new();
 
-        let _response = client
+        let response = client
             .post(self.url_order())
             .header("Content-Type", "application/json")
             .body(json)
             .send()
-            .await;
+            .await.map_err(|e| e.to_string())?;
+        let json = response.json().await.map_err(|e| e.to_string());
+        json
     }
 
     pub async fn init_game(self: &Self) {

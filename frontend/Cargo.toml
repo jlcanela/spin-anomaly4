@@ -27,6 +27,8 @@ jwt = "0.16.0"
 jsonwebtoken = "9.3.0"
 leptos-use = "0.10.7"
 chrono = "0.4.38"
+uuid = { version = "1.7.0", features = ["js", "v4", "serde"] }
+time = { version = "0.3.31", features = ["wasm-bindgen"] }
 
 [package.metadata.leptonic]
 # REQUIRED: Leptonic's build-script will copy the Leptonic themes to this directory.

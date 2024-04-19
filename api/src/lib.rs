@@ -19,6 +19,32 @@ pub struct Star {
     pub dev_max: i32,
 }
 
+impl Star {
+    pub fn check(self: &Self, order: &Order) ->  Result<(), OrderFailed>  {
+        
+        match order {
+            Order::Produce { .. } => Ok(()), 
+            Order::Loot { .. } => if self.dev == 0 { 
+                Err(OrderFailed::NotEnoughDev)
+            } else { Ok(()) },
+            Order::Develop { .. } => if self.dev >= self.dev_max { 
+                Err(OrderFailed::TooMuchDev)
+            } else if self.shuttles < 3 {
+                Err(OrderFailed::NotEnoughShuttles)
+            } else {
+                Ok(())
+            },
+            Order::Colonize { .. }  => if self.dev > 0 {
+                Err(OrderFailed::DevShouldBeZero)
+            } else if self.shuttles < 3 {
+                Err(OrderFailed::NotEnoughShuttles)
+            } else {
+                Ok(())
+            },
+            Order::Move { .. }  => Ok(()) 
+        }
+    }
+}
 
 #[derive(Clone, Debug, PartialEq, Hash, Eq, Serialize, Deserialize)]
 pub struct Player {
@@ -80,6 +106,26 @@ impl Order {
             Order::Move { star_id: _, dst_id: _, nb: _ } => { *self = Order::Move { star_id, dst_id: 0, nb: 0 } },
         } 
     }
+
+    pub fn cost(self: &Self) -> i32 {
+        match self {
+            Order::Produce { star_id: _ } => 8,
+            Order::Loot { star_id: _ } => 1,
+            Order::Develop { star_id: _ } => 1,
+            Order::Colonize { star_id: _ } => 8,
+            Order::Move { star_id: _, dst_id: _, nb: _ } => 1,
+        }
+    }
+
+    pub fn check(self: &Self, player: &Player) -> Result<(), OrderFailed> {
+        tracing::info!("check order:{:?}, player: {:?}, cost: {}, check: {}", self, player, self.cost(), player.points < self.cost());
+        if player.points < self.cost() {
+             Err(OrderFailed::NotEnoughPoints) 
+        } else {
+            Ok(())
+        }
+    }
+
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -110,3 +156,24 @@ pub struct Status {
     pub points: i32,
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum OrderFailed {
+    ServiceFailure(String, String),
+    NotEnoughPoints,
+    NotEnoughShuttles,
+    NotEnoughDev,
+    TooMuchDev,
+    DevShouldBeZero,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum OrderResult {
+    Produce { name: String, produced_shuttles: i32, points: i32 },
+    Loot { name: String, produced_shuttles: i32, points: i32 },
+    Develop { name: String, consumed_shuttles: i32, new_dev: i32, points: i32 },
+    Colonize { name: String, consumed_shuttles: i32, new_dev: i32, points: i32 },
+    Move { name_source: String, name_destination: String, moved_shuttles: i32, points: i32 },
+    Attack { name_source: String, name_destination: String, attacking_shuttles: i32, lost_shuttles: i32, destroyed_shuttles: i32, points: i32 },
+    OrderFailed(OrderFailed)
+}

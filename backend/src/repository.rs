@@ -1,8 +1,9 @@
 use std::time::SystemTime;
 
-use anyhow::Ok;
-use api::{Order, Player, Situation, Star};
+use api::{Order, OrderFailed, OrderResult, Player, Situation, Star};
 use spin_sdk::key_value::Store;
+
+use OrderFailed::ServiceFailure;
 
 pub struct Repository {    
 }
@@ -24,7 +25,7 @@ impl Repository {
         let players = serde_json::to_string(&Fixtures::players()).map_err(|e| e.to_string())?;
         store.set("players", players.as_bytes()).map_err(|e| e.to_string())?;
 
-        Ok(()).map_err(|e| e.to_string())
+        Ok(())
     }
 
     pub fn clear_game(self: &Self) -> Result<(), String> {
@@ -38,7 +39,7 @@ impl Repository {
         let buffer = binary.ok_or(format!("no game ({})", name))?;
         let str = String::from_utf8(buffer).map_err(|e| e.to_string())?;
         let res = serde_json::from_str::<T>(&str).map_err(|e| e.to_string())?;
-        Ok(res).map_err(|e| e.to_string())
+        Ok(res)
     }
 
     pub fn situation(self: &Self) -> Result<String, String> {
@@ -55,88 +56,109 @@ impl Repository {
         };
 
         let json = serde_json::to_string(&situation).map_err(|e| e.to_string())?;
-        Ok(json).map_err(|e| e.to_string())
+        Ok(json)
     }
 
-    pub fn update_star<F>(self: &Self, star_id: i32, f: F) -> Result<(), String>
+    pub fn update_star<F>(self: &Self, star_id: i32, order: &Order, f: F) -> Result<Star, OrderFailed>
     where F: Fn(&mut Star) -> ()
     {
-        let store = Store::open_default().map_err(|e| e.to_string())?;
-        let mut stars = self.load_from_kv::<Vec<Star>>("stars".to_string(), &store)?;
-        let star_index = stars.iter().position(|s| s.id == star_id).ok_or(format!("no star {}", star_id))?;
-        f(&mut stars[star_index]);
-        let stars_str = serde_json::to_string(&stars).map_err(|e| e.to_string())?;
-        store.set("stars", stars_str.as_bytes()).map_err(|e| e.to_string())?;
-        Ok(()).map_err(|e| e.to_string())
+        let store = Store::open_default().map_err(|e| ServiceFailure("Data not accessible".to_string(), e.to_string()))?;
+        let mut stars = self.load_from_kv::<Vec<Star>>("stars".to_string(), &store).map_err(|s| ServiceFailure("Data not accessible (stars)".to_string(), s))?;
+        let star_index = stars.iter().position(|s| s.id == star_id).ok_or(ServiceFailure("Star not found".to_string(), star_id.to_string()))?;
+        let star = &mut stars[star_index];
+        star.check(order)?;
+        f(star);
+        let stars_str = serde_json::to_string(&stars).map_err(|s| ServiceFailure("Saving Stars Failed".to_string(), format!("Serialization|{}", s)))?;
+        store.set("stars", stars_str.as_bytes()).map_err(|s| ServiceFailure("Saving Stars Failed".to_string(), format!("Store|{}", s)))?;
+        Ok(stars[star_index].clone())
     }
 
-    pub fn update_player<F>(self: &Self, player_id: i32, f: F) -> Result<(), String>
-    where F: Fn(&mut Player) -> ()
-    {
-            let store = Store::open_default().map_err(|e| e.to_string())?;
-            let mut players = self.load_from_kv::<Vec<Player>>("players".to_string(), &store)?;
-            let player_index = players.iter().position(|p| p.id == player_id).ok_or(format!("no player {}", player_id))?;
-            f(&mut players[player_index]);
-            let players_str = serde_json::to_string(&players).map_err(|e| e.to_string())?;
-            store.set("players", players_str.as_bytes()).map_err(|e| e.to_string())?;
-            Ok(()).map_err(|e| e.to_string())
-    }
-
-    pub fn produce(self: &Self, star_id: i32) -> Result<(), String> {
+    
+    pub fn produce(self: &Self, star_id: i32, player: &mut Player, ordr: &Order) -> Result<OrderResult, OrderFailed> {
         tracing::info!("produce: {}", star_id);
-        let produce_cmd = |star: &mut Star|star.shuttles += star.dev; 
-        let _res = self.update_star(star_id, produce_cmd)?;
-        let res = self.update_player(1, |player: &mut Player| player.points -= 8)?;
-        Ok(res).map_err(|e| e.to_string())
+        let cost_point = ordr.cost();
+        let produce_cmd = |star: &mut Star|{
+            star.shuttles += star.dev; 
+        };
+        
+        let star = self.update_star(star_id, ordr,  produce_cmd)?;
+        player.points -= cost_point;
+        Ok(OrderResult::Produce { name: star.name.clone(), produced_shuttles: star.dev, points: cost_point})
     }
-
-    pub fn loot(self: &Self, star_id: i32) -> Result<(), String> {
+    
+    pub fn loot(self: &Self, star_id: i32, player: &mut Player, ordr: &Order) -> Result<OrderResult, OrderFailed> {
         tracing::info!("loot: {}", star_id);
+        let cost_point = ordr.cost();
+        let cost_dev = 1;
+        let amount_shuttles = 3;
+        
         let loot_cmd = |star: &mut Star|{
-            star.shuttles += 3;
-            star.dev -= 1;
+            star.shuttles += amount_shuttles;
+            star.dev -= cost_dev;
         };
-        let _res = self.update_star(star_id, loot_cmd)?;
-        let res = self.update_player(1, |player: &mut Player| player.points -= 1)?;
-        Ok(res).map_err(|e| e.to_string())
+        
+        let star = self.update_star(star_id, ordr, loot_cmd)?;
+        player.points -= cost_point;
+        Ok(OrderResult::Loot{ name: star.name.clone(), produced_shuttles: amount_shuttles, points: cost_point})
     }
-
-    pub fn develop(self: &Self, star_id: i32) -> Result<(), String> {
+    
+    pub fn develop(self: &Self, star_id: i32, player: &mut Player, ordr: &Order) -> Result<OrderResult, OrderFailed> {
         tracing::info!("develop: {}", star_id);
+        let cost_point = ordr.cost();
+        let cost_shuttles = 3;
+        let amount_dev = 1;
+        
         let loot_cmd = |star: &mut Star|{
-            star.shuttles -= 3;
-            star.dev += 1;
+            star.shuttles -= cost_shuttles;
+            star.dev += amount_dev;
         };
-        let _res = self.update_star(star_id, loot_cmd)?;
-        let res = self.update_player(1, |player: &mut Player| player.points -= 8)?;
-
-        Ok(res).map_err(|e| e.to_string())
+        
+        let star = self.update_star(star_id, ordr, loot_cmd)?;
+        player.points -= cost_point;
+        
+        Ok(OrderResult::Develop { name: star.name.clone(), consumed_shuttles: cost_shuttles, new_dev: star.dev, points: cost_point })
     }
-
-    pub fn colonize(self: &Self, star_id: i32) -> Result<(), String> {
+    
+    pub fn colonize(self: &Self, star_id: i32, player: &mut Player, ordr: &Order) -> Result<OrderResult, OrderFailed> {
         tracing::info!("develop: {}", star_id);
+        let cost_point = ordr.cost();
+        let cost_shuttles = 3;
+        let amount_dev = 1;
+        
         let colonize_cmd = |star: &mut Star|{
-            star.shuttles -= 3;
-            star.dev = 1;
+            star.shuttles -= cost_shuttles;
+            star.dev = amount_dev;
         };
-        let _res = self.update_star(star_id, colonize_cmd)?;
-        let res = self.update_player(1, |player: &mut Player| player.points -= 8)?;
-        Ok(res).map_err(|e| e.to_string())
-    }
 
-    pub fn order(self: &Self, order_str: String) -> Result<(), String> {
-        let order = serde_json::from_str::<Order>(&order_str).map_err(|e| e.to_string())?;
-        tracing::info!("order: {:?}", order);
-        let res = match order {
-            Order::Produce { star_id }=> self.produce(star_id),
-            Order::Loot { star_id } => self.loot(star_id),
-            Order::Develop { star_id } => self.develop(star_id),
-            Order::Colonize { star_id } => self.colonize(star_id),
+        let star = self.update_star(star_id, ordr, colonize_cmd)?;
+        player.points -= cost_point;
+        Ok(OrderResult::Colonize { name: star.name.clone(), consumed_shuttles: cost_shuttles, new_dev: star.dev, points: cost_point })
+    }
+    
+    pub fn order(self: &Self, order_str: String, player_id: i32) -> Result<OrderResult, OrderFailed> {
+        let ordr = serde_json::from_str::<Order>(&order_str).map_err(|e|ServiceFailure("Invalid Order Format".to_string(), e.to_string()))?;
+        let store = Store::open_default().map_err(|e| ServiceFailure("Data not accessible".to_string(), e.to_string()))?;
+        let mut players = self.load_from_kv::<Vec<Player>>("players".to_string(), &store).map_err(|s| ServiceFailure("Data not accessible (players)".to_string(), s))?;
+        let player_index = players.iter().position(|p| p.id == player_id).ok_or(ServiceFailure("Player not found".to_string(), player_id.to_string()))?;
+        let player = &mut players[player_index];
+        let check = ordr.check(player);
+        tracing::info!("order: {:?}, player: {:?}, check: {:?}", ordr, player, check);
+        let _ = check?;
+        
+        let res = match ordr {
+            Order::Produce { star_id }=> self.produce(star_id, player, &ordr),
+            Order::Loot { star_id } => self.loot(star_id, player, &ordr),
+            Order::Develop { star_id } => self.develop(star_id, player, &ordr),
+            Order::Colonize { star_id } => self.colonize(star_id, player, &ordr),
             Order::Move { star_id, dst_id, nb } => {
                 tracing::info!("move: {} to {} shuttles {}", star_id, dst_id, nb);
-                Ok(()).map_err(|e| e.to_string())
+                //     Attack { name_source: String, name_destination: String, attacking_shuttles: i32, lost_shuttles: i32, destroyed_shuttles: i32, points: i32 },
+                Ok(OrderResult::Move { name_source: "".to_string(), name_destination: "".to_string(), moved_shuttles: 0, points: 0 })
             }
         };
+
+        let players_str = serde_json::to_string(&players).map_err(|s| ServiceFailure("Saving Player Failed".to_string(), format!("Serialization|{}", s)))?;
+        store.set("players", players_str.as_bytes()).map_err(|s| ServiceFailure("Saving Player Failed".to_string(), format!("Store|{}", s)))?;
         res         
     }
 
