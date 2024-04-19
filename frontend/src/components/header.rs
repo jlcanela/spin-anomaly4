@@ -4,7 +4,7 @@ use leptos_oidc::*;
 use leptos_use::storage::use_local_storage;
 use leptos_use::utils::FromToStringCodec;
 
-use crate::api::api::Api;
+use crate::api::Api;
 use crate::components::flags::*;
 use crate::components::auth_button::{LoginLink, LogoutLink};
 
@@ -29,16 +29,12 @@ pub fn AdminButton() -> impl IntoView {
 
         if current.is_empty() {
             let api = use_context::<Api>();
-            match api {
-                Some(api) => {
+                if let Some(api) = api {
                     let domain = api.config.auth0_domain;
                     let j = jwks(&domain).await.ok();
                     local_jwk_set.set(j.unwrap().to_string());
-                },
-                None => {}
-            }
+                }
         }
-        
     });
 
     let params = move || {
@@ -58,12 +54,8 @@ pub fn AdminButton() -> impl IntoView {
     });
 
     let is_admin_resource = create_resource(move ||memo.get(),   move|p| async {
-        match p {
-            (jwks, audience, token) => {
-                let res = is_admin(&jwks, &audience, &token).await;
-                res
-            }
-        }
+        let (jwks, audience, token) = p;
+        is_admin(&jwks, &audience, &token).await
     });
 
     view! {

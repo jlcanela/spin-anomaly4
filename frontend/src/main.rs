@@ -67,7 +67,7 @@ fn base_url() -> String {
 fn main() {
     use tracing_subscriber_wasm::MakeConsoleWriter;
 
-    let _subscriber = tracing_subscriber::fmt()
+    tracing_subscriber::fmt()
     .compact()
     .with_file(true)
     .with_line_number(true)

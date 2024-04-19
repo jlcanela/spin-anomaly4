@@ -4,10 +4,10 @@ use leptos::{ *};
 use uuid::Uuid;
 use time;
 
-use crate::api::api::Api;
+use crate::api::Api;
 
 async fn post_order(cmd: &Order) -> Result<OrderResult, String> {
-    expect_context::<Api>().send_order(&cmd).await
+    expect_context::<Api>().send_order(cmd).await
 }
 
 trait CmdView {
@@ -56,13 +56,13 @@ pub fn Command(
     let (nb_shuttles_attack, set_nb_shuttles_attack) = create_signal(0.0);
 
     let issue_order = create_action(move |cmd: &Order| {
-        let star_id = current_star_id.get().unwrap().clone() as i32;
+        let star_id = current_star_id.get().unwrap() as i32;
         let mut cmd = cmd.clone();
         cmd.with_star_id(star_id);
         async move {
             let order_result = post_order(&cmd).await;
             order_result.map(|or| {
-                set_version.update(|v| *v = *v + 1);
+                set_version.update(|v| *v += 1);
                 let toasts = expect_context::<Toasts>();
                 let toast_variant = match or {
                     OrderResult::OrderFailed(_) => ToastVariant::Error,
@@ -193,7 +193,7 @@ pub fn OwnedStars(
                     </TableHeader>
                     <TableBody>
                         <Transition>
-                            <For each=move ||stars.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
+                            <For each=move ||stars.get().unwrap_or_default() key=|x| x.clone() children=move |star| view! {
                                 <TableRow>
                                     <TableCell>{star.name}</TableCell>
                                     <TableCell>"("{star.x}", "{star.y}")"</TableCell>
@@ -247,7 +247,7 @@ pub fn Radar(radar: Signal<Option<Vec<Star>>>) -> impl IntoView {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        <For each=move ||radar.get().unwrap_or(vec![]) key=|x| x.clone() children=move |star| view! {
+                        <For each=move ||radar.get().unwrap_or_default() key=|x| x.clone() children=move |star| view! {
                             <TableRow>
                                 <TableCell>{star.name}</TableCell>
                                 <TableCell>{star.owner}</TableCell>

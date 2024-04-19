@@ -2,7 +2,7 @@ use leptos::*;
 use leptos_oidc::*;
 use leptonic::prelude::*;
 
-use crate::api::api::Api;
+use crate::api::Api;
 
 
 async fn init_game() {

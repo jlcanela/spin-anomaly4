@@ -2,7 +2,7 @@ use api::{Player, Situation};
 use leptonic::prelude::*;
 use leptos::*;
 
-use crate::{api::api::Api, components::game_content::GameContent};
+use crate::{api::Api, components::game_content::GameContent};
 
 async fn situation() -> Option<Situation> {
     expect_context::<Api>().situation().await
