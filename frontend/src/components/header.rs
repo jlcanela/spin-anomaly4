@@ -7,6 +7,7 @@ use leptos_use::utils::FromToStringCodec;
 use crate::api::Api;
 use crate::components::flags::*;
 use crate::components::auth_button::{LoginLink, LogoutLink};
+use crate::i18n::*;
 
 pub async fn jwks(domain: &String) -> Result<String, String> {
     api::jwks::load_jwks(domain).await
@@ -22,6 +23,8 @@ pub async fn is_admin(jwks: &String, audience: &String, token: &String) -> bool 
 #[component]
 pub fn AdminButton() -> impl IntoView {
     
+    let i18n = provide_i18n_context();
+
     let (local_jwk, local_jwk_set, _) = use_local_storage::<String, FromToStringCodec>("jwk");
 
     spawn_local(async move {
@@ -64,7 +67,7 @@ pub fn AdminButton() -> impl IntoView {
                 if is_admin_resource.get().unwrap_or(false) {
                     view! {
                         <Link href="/admin">
-                            <H1 style="display: inline;">Admin</H1>
+                            <H1 style="display: inline;">{t!(i18n, menu_admin)}</H1>
                         </Link>
                     }.into_view()
                 } else {
@@ -79,37 +82,46 @@ pub fn AdminButton() -> impl IntoView {
 // Feel free to do more complicated things here than just displaying the error.
 #[component]
 pub fn Header() -> impl IntoView {
-    
+    let i18n = provide_i18n_context();
+
     view! {
         <div id="header" style="position: relative">
             <Stack class="header-anomaly4" orientation=StackOrientation::Horizontal spacing=Size::Em(0.6)>
                 <Link href="/">
-                    <H1>Anomaly4</H1>
+                    <H1>{t!(i18n, game_name)}</H1>
                 </Link>
                 <Authenticated loading=|| view! { "" } >
                     <Link href="/game">
-                    <H1 style="display: inline;">Le Jeu</H1>
+                    <H1 style="display: inline;">{t!(i18n, the_game)}</H1>
                     </Link>
                     <AdminButton/>
                 </Authenticated>
 
                 <Stack spacing=Size::Em(0.2) orientation=StackOrientation::Horizontal>
-                    <Stack spacing=Size::Em(0.2) orientation=StackOrientation::Horizontal>
-                        <Stack  style="margin-right: 1em;" spacing=Size::Em(0.2)>
-                            <GbFlag/>
-                            "EN"
+                    <Stack spacing=Size::Em(0.0) orientation=StackOrientation::Horizontal>
+                        <Stack spacing=Size::Em(0.0)>
+                            <Button on_click=move |_| {
+                                i18n.set_locale(Locale::en);
+                            }>
+                                <GbFlag/>
+                                "EN"
+                            </Button>  
                         </Stack>
-                        <Stack spacing=Size::Em(0.2)>
+                        <Stack style="margin-left: 0.1em; margin-right: 1em;" spacing=Size::Em(0.0)>
+                            <Button on_click=move |_| {
+                                i18n.set_locale(Locale::fr);
+                            }>
                             <FrFlag/>
                             "FR"
+                            </Button>
                         </Stack>
                     </Stack>
                     <Authenticated unauthenticated=move || {
                         view! {                         
-                            <LoginLink>"Se Connecter"</LoginLink> 
+                            <LoginLink>{t!(i18n, btn_connect)}</LoginLink> 
                         }
                     }>          
-                    <LogoutLink>"Se Déconnecter"</LogoutLink>
+                    <LogoutLink>{t!(i18n, btn_disconnect)}</LogoutLink>
                     </Authenticated>
                 </Stack>
             </Stack>

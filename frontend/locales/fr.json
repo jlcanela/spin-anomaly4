@@ -1,3 +1,74 @@
 {
-    "hello_world": "Bonjour le monde!"
+    "game_name": "Anomalie4",
+    "the_game": "Le Jeu",
+    "btn_connect": "Se Connecter",
+    "btn_disconnect": "Se Déconnecter",
+    "menu_admin": "Admin",
+    "register": {
+        "title": "S'enregistrer",
+        "disclaimer": "Ce site est un projet personnel privé. Seules les personnes habilitées ont le droit de s'enregistrer et de jouer.",
+        "data_usage_1": "Si vous vous enregistrez, vous pouvez le faire soit en utilisant un compte google, soit en fournissant un email et un mot de passe.",
+        "data_usage_2": "Votre email sera utilisé par le fournisseur d'authentification <a href='https://auth0.com/'>Auth0</a> pour vous envoyer un email de confirmation. Auth0 fourni également un service de réinitialisation de mot de passe et de suppression de compte.",
+        "data_usage_3": "Le site en lui même n'utilise votre email que pour l'associer à votre compte de jeu, il ne vous enverra pas de spam.",
+        "data_usage_4": "Le fournisseur d'authentification <a href='https://auth0.com/'>Auth0</a> peut conserver votre adresse IP pendant une durée indéfinie",
+        "abuse_warning": "En cas de tentative de piratage ou d'abus, toutes les informations vous concernant seront transmises aux autorités compétentes.",
+        "accept_terms": "J'accepte ces conditions et je m'enregistre: ",
+        "register":  "S'enregistrer"
+    },
+    "description": {
+        "title": "Le jeu Anomalie4",
+        "call_to_action_1": "Vous aimez les jeux simples à jouer et à comprendre où l'habilité peut faire la différence ?",
+        "call_to_action_2": "Vous n'aimez ou ne pouvez pas passer des heures à jouer à des jeux de stratégie temps réel.",
+        "call_to_action_3": "Vous en avez assez de jouer contre un ordinateur stupide.",
+        "call_to_action_4": "Vous aimez avoir le temps d'user de diplomatie avec d'autres joueurs ?",
+        "call_to_action_5": "ALORS, la 4e Anomalie est un jeu fait pour vous !",
+        "call_to_action_6": "La quatrième anomalie est un jeu entièrement gratuit qui se situe à mi chemin entre le jeu par correspondance et le jeu en temps réel. Il y a pas de notion de tour de jeu et vous jouez à votre rythme tout en conservant les mêmes chances de gagner."
+    },
+    "story": {
+        "title": "L'histoire",
+        "desc_1": "Vous allez voir c'est très original",
+        "desc_2": "C'est le chaos. L'empereur vient de mourir et le système politique sclérosé vient de s'effondrer sur lui même. Vous, qui êtes le gouverneur d'une planète, vous êtes persuadé que vous seuls pourrez ramener la grandeur passée de l'empire. Le seul problème est que les autres gouverneurs ne sont même pas au courant. Vous allez être obligé de recourir à la force.",
+        "desc_3": "Si vous voulez en lire plus au sujet de l'histoire cliquez là mais vous n'êtes pas obligé de le faire pour jouer."
+    },
+    "principle": {
+        "title": "Le principe",
+        "desc_1": "Chaque heure qui passe vous apporte des points de pouvoir politique que vous pouvez utiliser pour réaliser des actions dans le jeu. Chaque action à un coût politique propre et nécessite également des ressources.",
+        "desc_2": "Les étoiles que vous contrôlez produisent des vaisseaux que vous pouvez déplacer ou transformer pour améliorer les capacités de vos étoiles.",
+        "desc_3": "Vous pouvez échanger des messages avec les autres joueurs pour nouer des alliances ou bien jouer de désinformation.",
+        "desc_4": "Pour animer la partie, le jeu est ponctué d'anomalies dont je vous laisse la surprise."
+    }, 
+    "actions": {
+        "title": "Les actions",
+        "develop": "DEVELOPPER la capacité d'un système",
+        "attack": "DEPLACER des vaisseaux pour renforcer vos étoiles ou attaquer celles de votre voisin",
+        "produce": "PRODUIRE des vaisseaux sur vos étoiles",
+        "colonize": "COLONISER des étoiles",
+        "loot": "PILLER une de vos étoiles pour produire plus de vaisseaux",
+        "message": "envoyer un MESSAGE à un autre joueur.",
+        "new_actions": "De nouveaux ordres viennent s'ajouter au fur et à mesure de votre développement."
+    }, 
+    "anomalies": {
+        "title": "Les anomalies",
+        "anomaly_1": "Quand la bête qui montre les dents lorsqu'elle est heureuse viendra, le vieux royaume des sages Prolarch' succombera.",
+        "anomaly_2": "Plus tard, lorsque la chose ne mordra plus, elle se révoltera.",
+        "anomaly_3": "Les sages enfants viendront.",
+        "anomaly_4": "Vainqueurs, ils instilleront le poison, la chose alors s'assagira ou disparaîtra."
+    },
+    "game": {
+        "governor": "Gouverneur",
+        "next_point": "Prochain point de pouvoir dans 28h 12mn 00s",
+        "control_center": "Centre de contrôle",
+        "your_stars": "Vos étoiles",
+        "select_star": "Sélectionnez une étoile pour effectuer une action",
+        "radar": "Radar",
+        "name": "Nom",
+        "owner": "Propriétaire",
+        "position": "Position",
+        "nb_shuttles": "Nb de navettes",
+        "dev_eco": "Dév. éco actuel",
+        "dev_eco_max": "Dév. éco max",
+        "distance_al": "Distance en Années Lumière",
+        "order_cost": "Coût politique de déplacement",
+        "action": "Action"
+    }
 }

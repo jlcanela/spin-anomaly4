@@ -5,6 +5,7 @@ use uuid::Uuid;
 use time;
 
 use crate::api::Api;
+use crate::i18n::*;
 
 async fn post_order(cmd: &Order) -> Result<OrderResult, String> {
     expect_context::<Api>().send_order(cmd).await
@@ -52,6 +53,9 @@ pub fn Command(
     star_name: Signal<String>,
     set_version: WriteSignal<i32>,
 ) -> impl IntoView {
+
+    let i18n = provide_i18n_context();
+
     let (nb_shuttles_move, set_nb_shuttles_move) = create_signal(0.0);
     let (nb_shuttles_attack, set_nb_shuttles_attack) = create_signal(0.0);
 
@@ -175,6 +179,9 @@ pub fn OwnedStars(
     stars: Signal<Option<Vec<Star>>>,
     set_version: WriteSignal<i32>,
 ) -> impl IntoView {
+
+    let i18n = provide_i18n_context();
+
     let (current_star_id, set_current_star_id) = create_signal(Option::<u32>::None);
 
     view! {
@@ -183,12 +190,12 @@ pub fn OwnedStars(
                 <Table bordered=true hoverable=true>
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderCell>"Nom"</TableHeaderCell>
-                            <TableHeaderCell>"Position"</TableHeaderCell>
-                            <TableHeaderCell>"Nb vaisseaux"</TableHeaderCell>
-                            <TableHeaderCell>"Dev. éco actuel"</TableHeaderCell>
-                            <TableHeaderCell>"Dev. éco max"</TableHeaderCell>
-                            <TableHeaderCell>"Action"</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.name)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.position)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.nb_shuttles)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.dev_eco)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.dev_eco_max)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.action)}</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -230,20 +237,23 @@ pub fn OwnedStars(
 
 #[component]
 pub fn Radar(radar: Signal<Option<Vec<Star>>>) -> impl IntoView {
+
+    let i18n = provide_i18n_context();
+
     view! {
         <div>
             <TableContainer>
                 <Table bordered=true hoverable=true>
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderCell>"Nom"</TableHeaderCell>
-                            <TableHeaderCell>"Propriétaire"</TableHeaderCell>
-                            <TableHeaderCell>"Position"</TableHeaderCell>
-                            <TableHeaderCell>"Nb vaisseaux"</TableHeaderCell>
-                            <TableHeaderCell>"Dev. éco actuel"</TableHeaderCell>
-                            <TableHeaderCell>"Dev. éco max"</TableHeaderCell>
-                            <TableHeaderCell>"Distance en Années Lumière"</TableHeaderCell>
-                            <TableHeaderCell>"Coût politique du déplacement"</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.name)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.owner)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.position)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.nb_shuttles)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.dev_eco)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.dev_eco_max)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.distance_al)}</TableHeaderCell>
+                            <TableHeaderCell>{t!(i18n, game.order_cost)}</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -273,12 +283,15 @@ pub fn GameContent(
     radar: Signal<Option<Vec<Star>>>,
     set_version: WriteSignal<i32>,
 ) -> impl IntoView {
+
+    let i18n = provide_i18n_context();
+
     view! {
         <Stack spacing=Size::Em(0.0)>
-            <H2>"Vos étoiles"</H2>
-            <p>"Sélectionner une étoile pour effectuer une action"</p>
+            <H2>{t!(i18n, game.your_stars)}</H2>
+            <p>{t!(i18n, game.select_star)}</p>
             <OwnedStars stars = stars set_version = set_version/>
-            <H2>"Radar"</H2>
+            <H2>{t!(i18n, game.radar)}</H2>
             <Radar radar = radar />
         </Stack>
     }

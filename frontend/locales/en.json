@@ -1,3 +1,74 @@
 {
-    "hello_world": "Hello World!"
+    "game_name": "Anomaly4",
+    "the_game": "Game",
+    "btn_connect": "Log In",
+    "btn_disconnect": "Log Out",
+    "menu_admin": "Admin",
+    "register": {
+        "title": "Register",
+        "disclaimer": "This site is a private personal project. Only authorized individuals have the right to register and play.",
+        "data_usage_1": "If you register, you can do so either by using a Google account, or by providing an email and a password.",
+        "data_usage_2": "Your email will be used by the authentication provider <a href='https://auth0.com/'>Auth0</a> to send you a confirmation email. Auth0 also provides a password reset and account deletion service.",
+        "data_usage_3": "The site itself only uses your email to associate it with your game account, it will not send you spam.",
+        "data_usage_4": "The authentication provider <a href='https://auth0.com/'>Auth0</a> may retain your IP address for an indefinite period",
+        "abuse_warning": "In case of hacking attempts or abuse, all information about you will be transmitted to the competent authorities.",
+        "accept_terms": "I accept these terms and register: ",
+        "register":  "Register"
+    },
+    "description": {
+        "title": "The Anomaly4 Game",
+        "call_to_action_1": "Do you like simple games to play and understand where skill can make a difference?",
+        "call_to_action_2": "You don't like or can't spend hours playing real-time strategy games.",
+        "call_to_action_3": "You're tired of playing against a stupid computer.",
+        "call_to_action_4": "Do you like having time to use diplomacy with other players?",
+        "call_to_action_5": "THEN, the 4th Anomaly is a game made for you!",
+        "call_to_action_6": "The fourth anomaly is a completely free game that is halfway between correspondence gaming and real-time gaming. There is no concept of a game turn and you play at your own pace while keeping the same chances of winning."
+    },
+    "story": {
+        "title": "The story",
+        "desc_1": "You will see it is very original",
+        "desc_2": "It's chaos. The emperor has just died and the sclerotic political system has just collapsed on itself. You, who are the governor of a planet, are convinced that only you can bring back the past greatness of the empire The only problem is that the other governors don't even know about it. You will be forced to resort to force.",
+        "desc_3": "If you want to read more about the story click here but you don't have to do that to play."
+    },
+    "principle": {
+        "title": "The principle",
+        "desc_1": "Each hour that passes brings you political power points that you can use to perform actions in the game. Each action has its own political cost and also requires resources.",
+        "desc_2": "The stars you control produce ships that you can move or transform to improve the abilities of your stars.",
+        "desc_3": "You can exchange messages with other players to build alliances or play disinformation.",
+        "desc_4": "To liven up the game, the game is punctuated with anomalies which I will leave you as a surprise."
+    },
+    "actions": {
+        "title": "Actions",
+        "develop": "DEVELOP the capacity of a system",
+        "attack": "MOVE ships to strengthen your stars or attack your neighbor's stars",
+        "produce": "PRODUCE ships on your stars",
+        "colonize": "COLONIZE stars",
+        "loot": "LOOT one of your stars to produce more ships",
+        "message": "send a MESSAGE to another player.",
+        "new_actions": "New orders are added as you develop."
+    },
+    "anomalies": {
+        "title": "The anomalies",
+        "anomaly_1": "When the beast that bares its teeth when happy comes, the old kingdom of Prolarch' sages will succumb.",
+        "anomaly_2": "Later, when the thing no longer bites, it will rebel.",
+        "anomaly_3": "The good children will come.",
+        "anomaly_4": "Winners, they will instill the poison, the thing will then calm down or disappear."
+    },
+    "game": {
+        "governor": "Governor",
+        "next_point": "Next power point in 28h 12mn 00s",
+        "control_center": "Control Center",
+        "your_stars": "Your stars",
+        "select_star": "Select a star to perform an action",
+        "radar": "Radar",
+        "name": "Name",
+        "owner": "Owner",
+        "position": "Position",
+        "nb_shuttles": "Nb of shuttles",
+        "dev_eco": "Current eco dev",
+        "dev_eco_max": "Max eco dev",
+        "distance_al": "Distance in Light Years",
+        "order_cost": "Travel cost",
+        "action": "Action"
+    }
 }

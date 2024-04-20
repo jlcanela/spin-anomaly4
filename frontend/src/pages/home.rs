@@ -2,24 +2,26 @@ use leptonic::prelude::*;
 use leptos::*;
 use leptos_oidc::*;
 use crate::components::auth_button::LoginLink;
+use crate::i18n::*;
 
 #[component]
 pub fn Register() -> impl IntoView {
+    let i18n = provide_i18n_context();
 
     let (accept_register, set_accept_register) = create_signal(false);
     let disable_register = move || !accept_register.get();
     view! {       
         <div class="home-text">
-            <p>"Ce site est un projet personnel privé. Seules les personnes habilitées ont le droit de s'enregistrer et de jouer."</p>
-            <p>"Si vous vous enregistrez, vous pouvez le faire soit en utilisant un compte google, soit en fournissant un email et un mot de passe."</p>
-            <p>"Votre email sera utilisé par le fournisseur d'authentification "<a href="https://auth0.com/">Auth0</a>" pour vous envoyer un email de confirmation. Auth0 fourni également un service de réinitialisation de mot de passe et de suppression de compte."</p>
-            <p>"Le site en lui même n'utilise votre email que pour l'associer à votre compte de jeu, il ne vous enverra pas de spam."</p>
-            <p>"Le fournisseur d'authentification "<a href="https://auth0.com/">Auth0</a>" peut conserver votre adresse IP pendant une durée indéfinie"</p>
-            <p>"En cas de tentative de piratage ou d'abus, toutes les informations vous concernant seront transmises aux autorités compétentes."</p>
+            <p>{t!(i18n, register.disclaimer)}</p>
+            <p>{t!(i18n, register.data_usage_1)}</p>
+            <p>{t!(i18n, register.data_usage_2)}</p>
+            <p>{t!(i18n, register.data_usage_3)}</p>
+            <p>{t!(i18n, register.data_usage_4)}</p>
+            <p>{t!(i18n, register.abuse_warning)}</p>
             <div style="block:inline">
-                "J'accepte ces conditions et je m'enregistre: "
+                {t!(i18n, register.accept_terms)}
                 <Checkbox checked=accept_register set_checked=set_accept_register />
-                <LoginLink disabled=Signal::derive(disable_register)>"S'enregistrer"</LoginLink>  
+                <LoginLink disabled=Signal::derive(disable_register)> {t!(i18n, register.register)}</LoginLink>  
             </div>
         </div>
     }
@@ -27,47 +29,48 @@ pub fn Register() -> impl IntoView {
 
 #[component]
 pub fn Description() -> impl IntoView {
+    let i18n = provide_i18n_context();
     view! {
         <div style="padding: 2em;">
             <div>
-                <p>"Vous aimez les jeux simples à jouer et à comprendre où l'habilité peut faire la différence ?"</p>
-                <p>"Vous n'aimez ou ne pouvez pas passer des heures à jouer à des jeux de stratégie temps réel."</p>
-                <p>"Vous en avez assez de jouer contre un ordinateur stupide."</p>
-                <p>"Vous aimez avoir le temps d'user de diplomatie avec d'autres joueurs ?"</p>
-                <p>"ALORS, la 4e Anomalie est un jeu fait pour vous !"</p>
-                <p> "La quatrième anomalie est un jeu entièrement gratuit qui se situe à mi chemin entre le jeu par correspondance et le jeu en temps réel. Il y a pas de notion de tour de jeu et vous jouez à votre rythme tout en conservant les mêmes chances de gagner."</p>
+                <p>{t!(i18n, description.call_to_action_1)}</p>
+                <p>{t!(i18n, description.call_to_action_2)}</p>
+                <p>{t!(i18n, description.call_to_action_3)}</p>
+                <p>{t!(i18n, description.call_to_action_4)}</p>
+                <p>{t!(i18n, description.call_to_action_5)}</p>
+                <p>{t!(i18n, description.call_to_action_6)}</p>
+          </div>
+            <div>
+                <h2>{t!(i18n, story.title)}</h2>
+                <p>{t!(i18n, story.desc_1)}</p>
+                <p>{t!(i18n, story.desc_2)}</p>
+                <p>{t!(i18n, story.desc_3)}</p>
             </div>
             <div>
-                <h2>"L'histoire"</h2>
-                <p>"Vous allez voir c'est très original"</p>
-                <p>"C'est le chaos. L'empereur vient de mourir et le système politique sclérosé vient de s'effondrer sur lui même. Vous, qui êtes le gouverneur d'une planète, vous êtes persuadé que vous seuls pourrez ramener la grandeur passée de l'empire. Le seul problème est que les autres gouverneurs ne sont même pas au courant. Vous allez être obligé de recourir à la force."</p>
-                <p>"Si vous voulez en lire plus au sujet de l'histoire cliquez là mais vous n'êtes pas obligé de le faire pour jouer."</p>
+                <h2>{t!(i18n, principle.title)}</h2>
+                <p>{t!(i18n, principle.desc_1)}</p>
+                <p>{t!(i18n, principle.desc_2)}</p>
+                <p>{t!(i18n, principle.desc_3)}</p>
+                <p>{t!(i18n, principle.desc_4)}</p>
             </div>
             <div>
-                <h2>"Le principe"</h2>
-                <p>"Chaque heure qui passe vous apporte des points de pouvoir politique que vous pouvez utiliser pour réaliser des actions dans le jeu. Chaque action à un coût politique propre et nécessite également des ressources."</p>
-                <p>"Les étoiles que vous contrôlez produisent des vaisseaux que vous pouvez déplacer ou transformer pour améliorer les capacités de vos étoiles."</p>
-                <p>"Vous pouvez échanger des messages avec les autres joueurs pour nouer des alliances ou bien jouer de désinformation."</p>
-                <p>"Pour animer la partie, le jeu est ponctué d'anomalies dont je vous laisse la surprise."</p>
-            </div>
-            <div>
-                <h2>"Les actions"</h2>
+                <h2>{t!(i18n, actions.title)}</h2>
                 <ul>
-                    <li>"DEVELOPPER la capacité d'un système"</li>
-                    <li>"DEPLACER des vaisseaux pour renforcer vos étoiles ou attaquer celles de votre voisin"</li>
-                    <li>"PRODUIRE des vaisseaux sur vos étoiles"</li>
-                    <li>"COLONISER des étoiles" </li>
-                    <li>"PILLER une de vos étoiles pour produire plus de vaisseaux"</li>
-                    <li>"envoyer un MESSAGE à un autre joueur."</li>
+                    <li>{t!(i18n, actions.develop)}</li>
+                    <li>{t!(i18n, actions.attack)}</li>
+                    <li>{t!(i18n, actions.produce)}</li>
+                    <li>{t!(i18n, actions.colonize)}</li>
+                    <li>{t!(i18n, actions.loot)}</li>
+                    <li>{t!(i18n, actions.message)}</li>
                 </ul>
-                <p>"De nouveaux ordres viennent s'ajouter au fur et à mesure de votre développement."</p>
+                <p>{t!(i18n, actions.new_actions)}</p>
             </div>
             <div>
-                <h2>"Les anomalies"</h2>
-                <p>"Quand la bête qui montre les dents lorsqu'elle est heureuse viendra, le vieux royaume des sages Prolarch' succombera."</p>
-                <p>"Plus tard, lorsque la chose ne mordra plus, elle se révoltera."</p> 
-                <p>"Les sages enfants viendront."</p>
-                <p>"Vainqueurs, ils instilleront le poison, la chose alors s'assagira ou disparaîtra."</p>
+                <h2>{t!(i18n, anomalies.title)}</h2>
+                <p>{t!(i18n, anomalies.anomaly_1)}</p>
+                <p>{t!(i18n, anomalies.anomaly_2)}</p>
+                <p>{t!(i18n, anomalies.anomaly_3)}</p>
+                <p>{t!(i18n, anomalies.anomaly_4)}</p>
             </div>
         </div>
     }
@@ -75,6 +78,10 @@ pub fn Description() -> impl IntoView {
 
 #[component]
 pub fn Home() -> impl IntoView {
+    
+    let i18n = provide_i18n_context();
+
+
     view! {
         <div id="home">
             <Collapsibles default_on_open=OnOpen::CloseOthers>
@@ -82,7 +89,7 @@ pub fn Home() -> impl IntoView {
                     <Authenticated unauthenticated=move || view! {
                         <Collapsible>
                             <CollapsibleHeader slot>
-                                <H2 style="margin: 0em 0em 0em 0em; width: 100%">"S'enregistrer"</H2>
+                                <H2 style="margin: 0em 0em 0em 0em; width: 100%">{t!(i18n, register.title)}</H2>
                             </CollapsibleHeader>
                             <CollapsibleBody slot>
                                 <Register/>
@@ -91,7 +98,7 @@ pub fn Home() -> impl IntoView {
                     }>""</Authenticated>     
                     <Collapsible open=true>
                         <CollapsibleHeader slot>
-                            <H2 style="margin: 0em 0em 0em 0em; width: 100%">"Le jeu Anomaly 4"</H2>
+                            <H2 style="margin: 0em 0em 0em 0em; width: 100%">{t!(i18n, description.title)}</H2>
                         </CollapsibleHeader>
                         <CollapsibleBody slot>
                             <Description/>
