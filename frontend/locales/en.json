@@ -69,6 +69,32 @@
         "dev_eco_max": "Max eco dev",
         "distance_al": "Distance in Light Years",
         "order_cost": "Travel cost",
-        "action": "Action"
+        "action": "Action",
+        "actions_produce_title": "Produire",
+        "actions":{
+            "select": "Select",
+            "produce": {
+                "title": "Produce",
+                "message_1": "Produce shuttles on {{star_name}}",
+                "message_2": "Cost: {{cost}} points"
+            },
+            "loot": {
+                "title": "Loot",
+                "message_1": "Loot {{star_name}} for shuttles",
+                "message_2": "Cost: {{cost}} points"
+            },
+            "develop": {
+                "title": "Develop",
+                "message_1": "Economically develop {{star_name}}",
+                "message_2": "Cost: {{cost}} Points & {{cost_shuttles}} Shuttles"
+            },
+            "colonize": {
+                "title": "Colonize",
+                "message_1": "Colonize {{star_name}}",
+                "message_2": "Cost: {{cost}} Points & {{cost_shuttles}} Shuttles"
+            },
+            "attack": "Attaquer",
+            "message": "Envoyer un message"
+        }
     }
 }

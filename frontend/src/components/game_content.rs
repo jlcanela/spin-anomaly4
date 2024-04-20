@@ -89,53 +89,58 @@ pub fn Command(
     view! {
     <div id="buttons">
         <Tabs>
-            <Tab name="produce" label=view! { <div>"Produire"</div> }.into_view()>
+            <Tab name="produce" label=view! { <div>{t!(i18n, game.actions.produce.title)}</div> }.into_view()>
                 <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
                     <div>
-                "Produire des navettes sur "{star_name}<br/>"Coût: 8 Points"
+                    {t!(i18n, game.actions.produce.message_1, star_name=star_name.get())}
+                    <br/>
+                    {t!(i18n, game.actions.produce.message_2, cost=8)}
                     </div>
                     <Button on_click=move |_|  {
                         issue_order.dispatch(Order::produce(0));
-                    }>"Produire"</Button>
+                    }>{t!(i18n, game.actions.produce.title)}</Button>
                 </Stack>
             </Tab>
-            <Tab name="loot" label=view! { <div>"Piller"</div> }.into_view()>
+            <Tab name="loot" label=view! { <div>{t!(i18n, game.actions.loot.title)}</div> }.into_view()>
                 <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
                     <div>
-                    "Piller "{star_name}" pour obtenir des navettes"<br/>
-                    "Coût: 1 Point"<br/>
+                    {t!(i18n, game.actions.loot.message_1, star_name=star_name.get())}
+                    <br/>
+                    {t!(i18n, game.actions.loot.message_2, cost=8)}
                     //"Dev_Max ({3}) updated to: {2}"<br/>
                     //"Dev ({3}) updated to: {2}"
                     </div>
-                    <Button on_click=move |_| {
+                    <Button on_click=move |_|  {
                         issue_order.dispatch(Order::loot(0));
-                    }>"Piller"</Button>
+                    }>{t!(i18n, game.actions.loot.title)}</Button>
                 </Stack>
             </Tab>
-            <Tab name="develop" label=view! { <div>"Développer"</div> }.into_view()>
+            <Tab name="develop" label=view! { <div>{t!(i18n, game.actions.develop.title)}</div> }.into_view()>
                 <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
                     <div>
-                        "Developper économiquement "{star_name}<br/>
-                        "Coût: 8 Points & 3 Navettes"<br/>
-                        //"Dev ({2}) updated to: {3}."
+                    {t!(i18n, game.actions.develop.message_1, star_name=star_name.get())}
+                    <br/>
+                    {t!(i18n, game.actions.develop.message_2, cost=8, cost_shuttles=3)}
+                    //"Dev ({2}) updated to: {3}."
                     </div>
-                    <Button on_click=move |_| {
+                    <Button on_click=move |_|  {
                         issue_order.dispatch(Order::develop(0));
-                    }>"Développer"</Button>
+                    }>{t!(i18n, game.actions.develop.title)}</Button>
                 </Stack>
             </Tab>
-            <Tab name="colonize" label=view! { <div>"Coloniser"</div> }.into_view()>
+            <Tab name="colonize" label=view! { <div>{t!(i18n, game.actions.colonize.title)}</div> }.into_view()>
                 <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
                     <div>
-                        "Coloniser "{star_name}<br/>
-                        "Coût: 8 Points & 3 Navettes"<br/>
-                        //"Dev ({2}) updated to: {3}."
+                    {t!(i18n, game.actions.colonize.message_1, star_name=star_name.get())}
+                    <br/>
+                    {t!(i18n, game.actions.colonize.message_2, cost=8, cost_shuttles=3)}
                     </div>
-                    <Button on_click=move |_| {
+                    <Button on_click=move |_|  {
                         issue_order.dispatch(Order::colonize(0));
-                    }>"Coloniser"</Button>
+                    }>{t!(i18n, game.actions.colonize.title)}</Button>
                 </Stack>
             </Tab>
+
             <Tab name="move" label=view! { <div>"Déplacer"</div> }.into_view()>
                 <Stack spacing=Size::Em(1.0) orientation=StackOrientation::Horizontal>
                     <div>
@@ -209,7 +214,7 @@ pub fn OwnedStars(
                                     <TableCell>{star.dev_max}</TableCell>
                                     <TableCell><Button on_click=move |_| {
                                         set_current_star_id.set(Some(star.id as u32));
-                                    }>"Sélectionner"</Button>
+                                    }>{t!(i18n, game.actions.select)}</Button>
                                     </TableCell>
                                 </TableRow>
                                 {

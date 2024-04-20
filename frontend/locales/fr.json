@@ -69,6 +69,32 @@
         "dev_eco_max": "Dév. éco max",
         "distance_al": "Distance en Années Lumière",
         "order_cost": "Coût politique de déplacement",
-        "action": "Action"
+        "action": "Action",
+        "actions_produce_title": "Produire",
+        "actions": {
+            "select": "Sélectionner",
+            "produce": {
+                "title": "Produire",
+                "message_1": "Produire des navettes sur {{star_name}}",
+                "message_2": "Coût: {{cost}} points"
+            },
+            "loot": {
+                "title": "Piller",
+                "message_1": "Piller {{star_name}} pour obtenir des navettes",
+                "message_2": "Coût: {{cost}} points"
+            },
+            "develop": {
+                "title": "Développer",
+                "message_1": "Developper économiquement {{star_name}}",
+                "message_2": "Coût: {{cost}} Points & {{cost_shuttles}} Navettes"
+            },   
+            "colonize": {
+                "title": "Coloniser",
+                "message_1": "Coloniser {{star_name}}",
+                "message_2": "Coût: {{cost}} Points & {{cost_shuttles}} Navettes"
+            },   
+            "attack": "Attaquer",
+            "message": "Envoyer un message"
+        }
     }
 }
