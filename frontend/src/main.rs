@@ -16,6 +16,8 @@ use crate::pages::game::Game;
 use crate::pages::home::Home;
 use crate::pages::admin::Admin;
 
+leptos_i18n::load_locales!();
+
 #[component]
 pub fn App() -> impl IntoView {
     provide_meta_context();

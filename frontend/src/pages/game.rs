@@ -3,6 +3,7 @@ use leptonic::prelude::*;
 use leptos::*;
 
 use crate::{api::Api, components::game_content::GameContent};
+use crate::i18n::*;
 
 async fn situation() -> Option<Situation> {
     expect_context::<Api>().situation().await
@@ -10,23 +11,27 @@ async fn situation() -> Option<Situation> {
 
 #[component] 
 fn PlayerStatus(player: Signal<Player>) -> impl IntoView {
+    
+    let i18n = provide_i18n_context();
+
     view! {
 
         <div class="status-border">
-            <div>Governeur: { move || player.get().name }                    
+            <div>{t!(i18n, game.governor)}: { move || player.get().name }                    
             </div>
             <div>|</div>
             <div>{ move || player.get().points } Points
             </div>
             <div>|</div>
-            <div> prochain point dans 28h 12mn 00s
-            </div>
+            <div>{t!(i18n, game.next_point)}</div>
         </div>
     }
 }
 
 #[component]
 pub fn Game() -> impl IntoView {
+
+    let i18n = provide_i18n_context();
 
     let (version, set_version) = create_signal(0);
 
@@ -57,7 +62,7 @@ pub fn Game() -> impl IntoView {
             </Stack>    
             <div id="game-content">
                 <Tabs mount=Mount::Once>
-                    <Tab name="control-center" label="Centre de Contrôle".into_view()><GameContent stars = stars radar = radar set_version = set_version/></Tab>
+                    <Tab name="control-center" label={t!(i18n, game.control_center)}.into_view()><GameContent stars = stars radar = radar set_version = set_version/></Tab>
                     //<Tab name="star-map" label="Star Map".into_view()>"Star Map"</Tab>
                     //<Tab name="diplomacy" label="Diplomacy".into_view()>"Diplomacy"</Tab>
                 </Tabs>
