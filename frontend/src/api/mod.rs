@@ -1,4 +1,5 @@
 use api::{Order, OrderResult, Situation, WebConfig};
+
 use reqwest::Response;
 
 #[derive(Clone)]
@@ -28,6 +29,10 @@ impl Api {
         format!("{}/api/clear", self.base_url)
     }
 
+    fn authorization(&self, access_token: &String) -> String {
+       format!("Bearer {}", access_token)
+    }
+
     pub async fn situation(&self) -> Option<Situation> {
         let res: Response = match reqwest::get(self.url_situation()).await {
             Ok(res) => res,
@@ -39,37 +44,48 @@ impl Api {
         }
     }
 
-    pub async fn send_order(&self, o: &Order) -> Result<OrderResult, String> {
+    pub async fn send_order(&self, o: &Order, access_token: &String) -> Result<OrderResult, String> {
         let json = serde_json::to_string(o).unwrap();
         let client = reqwest::Client::new();
+
+        let authorization = self.authorization(access_token);
 
         let response = client
             .post(self.url_order())
             .header("Content-Type", "application/json")
+            .header("Authorization", authorization)
             .body(json)
             .send()
             .await.map_err(|e| e.to_string())?;
-        
-        response.json().await.map_err(|e| e.to_string())
+
+        let order_result = response.json().await.map_err(|e| e.to_string())?;
+        Ok(order_result)
     }
 
-    pub async fn init_game(&self) {
+    pub async fn init_game(&self, access_token: &String) -> Result<(), String> {
         let client = reqwest::Client::new();
+
+        let authorization = self.authorization(access_token);
 
         let _response = client
             .post(self.url_init())
             .header("Content-Type", "application/json")
+            .header("Authorization", authorization)
             .body("{}")
             .send()
-            .await;
+            .await.map_err(|e| e.to_string())?;
+        Ok(())
     }
 
-    pub async fn clear_game(&self) {
+    pub async fn clear_game(&self, access_token: &String) {
         let client = reqwest::Client::new();
+
+        let authorization = self.authorization(access_token);
 
         let _response = client
             .post(self.url_clear())
             .header("Content-Type", "application/json")
+            .header("Authorization", authorization)
             .body("{}")
             .send()
             .await;

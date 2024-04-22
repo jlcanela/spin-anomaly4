@@ -47,18 +47,16 @@ pub fn Game() -> impl IntoView {
         Some(situation.radar)
     });
 
-    let player = Signal::derive(move || {
-        match resource_situation.get().flatten() {
-            Some(situation) => situation.player,
-            None => Player::default(),
-        }
-    });
-
     view! {
         <div id="game">
         <Stack spacing=Size::Em(0.0)> 
             <Stack id="status" spacing=Size::Em(0.0) orientation=StackOrientation::Horizontal>
-                <PlayerStatus player = player/>
+                <PlayerStatus player = Signal::derive(move || {
+                    match resource_situation.get().flatten() {
+                        Some(situation) => situation.player,
+                        None => Player::default(),
+                    }
+                })/>
             </Stack>    
             <div id="game-content">
                 <Tabs mount=Mount::Once>

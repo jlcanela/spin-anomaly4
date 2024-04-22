@@ -25,8 +25,7 @@ fn make_auth_params(client_id: String, auth0_domain: String, base_url: String) -
 async fn load_config(url: String) -> Result<WebConfig, ConfigError> {
     
     let client = reqwest::Client::new();
-    let res = client.post(url)
-    .body("the exact body that is sent")
+    let res = client.get(url)
     .send()
     .await.map_err(|_| ConfigError::FetchError)?; // issue with request
     
