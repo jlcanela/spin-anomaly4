@@ -34,7 +34,7 @@ impl Star {
             } else {
                 Ok(())
             },
-            Order::Colonize { .. }  => if self.dev > 0 {
+            Order::Colonize { .. }  => if self.dev_max > 0 {
                 Err(OrderFailed::DevShouldBeZero)
             } else if self.shuttles < 3 {
                 Err(OrderFailed::NotEnoughShuttles)
@@ -118,7 +118,6 @@ impl Order {
     }
 
     pub fn check(self: &Self, player: &Player) -> Result<(), OrderFailed> {
-        tracing::info!("check order:{:?}, player: {:?}, cost: {}, check: {}", self, player, self.cost(), player.points < self.cost());
         if player.points < self.cost() {
              Err(OrderFailed::NotEnoughPoints) 
         } else {

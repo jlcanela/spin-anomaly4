@@ -5,19 +5,26 @@ use leptonic::prelude::*;
 use crate::api::Api;
 
 
-async fn init_game() {
-    expect_context::<Api>().init_game().await
+async fn init_game(access_token: String) {
+    let _ = expect_context::<Api>().init_game(&access_token).await;
 }
 
-async fn clear_game() {
-    expect_context::<Api>().clear_game().await
+async fn clear_game(access_token: String) {
+    expect_context::<Api>().clear_game(&access_token).await
 }
 
 #[component]
 pub fn Admin() -> impl IntoView {
 
-    let init = create_action( move |_: &String| init_game() );
-    let clear = create_action( move |_: &String| clear_game() );
+    let token = ||use_context::<Auth>().expect("No auth context").id_token().expect("No access token");
+    let init = create_action( move |_: &String| {
+        let t = token();
+        init_game(t) 
+    });
+    let clear = create_action( move |_: &String| {
+        let t = token();
+        clear_game(t) 
+    });
 
     view! {
         <Authenticated>

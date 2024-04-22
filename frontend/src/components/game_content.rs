@@ -1,6 +1,7 @@
 use api::{Order, OrderResult, OrderFailed::*, Star};
 use leptonic::prelude::*;
 use leptos::{ *};
+use leptos_oidc::Auth;
 use uuid::Uuid;
 use time;
 
@@ -8,7 +9,8 @@ use crate::api::Api;
 use crate::i18n::*;
 
 async fn post_order(cmd: &Order) -> Result<OrderResult, String> {
-    expect_context::<Api>().send_order(cmd).await
+    let token = ||use_context::<Auth>().expect("No auth context").id_token().expect("No access token");
+    expect_context::<Api>().send_order(cmd, &token()).await
 }
 
 trait CmdView {
@@ -64,25 +66,30 @@ pub fn Command(
         let mut cmd = cmd.clone();
         cmd.with_star_id(star_id);
         async move {
-            let order_result = post_order(&cmd).await;
-            order_result.map(|or| {
-                set_version.update(|v| *v += 1);
-                let toasts = expect_context::<Toasts>();
-                let toast_variant = match or {
-                    OrderResult::OrderFailed(_) => ToastVariant::Error,
-                    _ => ToastVariant::Success,
-                };
-                let toast = Toast {
-                    id: Uuid::new_v4(),
-                    variant: toast_variant,
-                    header: or.header_view(),
-                    body: or.body_view(),
-                    timeout: ToastTimeout::DefaultDelay, 
-                    created_at: time::OffsetDateTime::now_utc(),
-                };
-                    
-                toasts.push(toast);  
-            })
+            let order_result = match post_order(&cmd).await {
+                Ok(or) => or,
+                Err(e) => OrderResult::OrderFailed(ServiceFailure("Internal Error".to_string(), e)),
+            };
+
+            match &order_result {
+                OrderResult::OrderFailed(_) => (),
+                _ => set_version.update(|v| *v += 1)
+            }
+            let toasts = expect_context::<Toasts>();
+            let toast_variant = match order_result {
+                OrderResult::OrderFailed(_) => ToastVariant::Error,
+                _ => ToastVariant::Success,
+            };
+            let toast = Toast {
+                id: Uuid::new_v4(),
+                variant: toast_variant,
+                header: order_result.header_view(),
+                body: order_result.body_view(),
+                timeout: ToastTimeout::DefaultDelay, 
+                created_at: time::OffsetDateTime::now_utc(),
+            };
+                
+            toasts.push(toast);  
         }
     });
 

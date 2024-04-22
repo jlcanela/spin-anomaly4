@@ -136,6 +136,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "api",
+ "jsonwebtoken",
+ "reqwest 0.12.3",
  "serde",
  "serde_json",
  "spin-sdk",
